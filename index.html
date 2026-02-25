@@ -35,6 +35,21 @@
     </div>
   </header>
 
+  <!-- SALÁRIO -->
+  <section class="salary-config container">
+    <h2>Configuração de Salário</h2>
+
+    <div class="salary-box">
+      <label>
+        <input type="checkbox" id="salarioAtivo">
+        Utilizar salário fixo mensal
+      </label>
+
+      <input type="number" id="salarioMensal" placeholder="Valor do salário">
+      <button id="salvarSalario">Salvar</button>
+    </div>
+  </section>
+
   <!-- DASHBOARD -->
   <section class="dashboard container">
 
@@ -67,6 +82,8 @@
           <option value="">Selecione</option>
           <option value="receita">Receita</option>
           <option value="despesa">Despesa</option>
+          <option value="despesa_fixa">Despesa Fixa</option>
+          <option value="despesa_parcelada">Despesa Parcelada</option>
         </select>
       </div>
 
@@ -98,6 +115,11 @@
         <input type="date" id="data" required>
       </div>
 
+      <div class="form-group" id="parcelasContainer" style="display:none;">
+        <label for="totalParcelas">Quantidade de parcelas</label>
+        <input type="number" id="totalParcelas" min="2">
+      </div>
+
       <button type="submit" class="btn-add">Adicionar</button>
 
     </form>
@@ -112,8 +134,8 @@
         <tr>
           <th>Tipo</th>
           <th>Descrição</th>
-          <th>Categoria</th>
           <th>Valor</th>
+          <th>Categoria</th>
           <th>Data</th>
           <th>Ações</th>
         </tr>

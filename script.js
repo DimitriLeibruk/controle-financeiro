@@ -2,6 +2,10 @@
 // ESTADO DA APLICAÇÃO
 // =============================
 
+let configuracaoFinanceira = {
+  salarioMensal: 0,
+  ativo: false
+};
 let transacoes = [];
 let metaPercentual = 20;
 let modoEdicao = false;
@@ -39,7 +43,7 @@ document.getElementById("prevMonth").addEventListener("click", () => {
     mesAtual--;
   }
 
-  atualizarSistema();
+  animarTrocaMes("prev");
 });
 
 document.getElementById("nextMonth").addEventListener("click", () => {
@@ -50,7 +54,7 @@ document.getElementById("nextMonth").addEventListener("click", () => {
     mesAtual++;
   }
 
-  atualizarSistema();
+  animarTrocaMes("next");
 });
 
 // =============================
@@ -58,13 +62,68 @@ document.getElementById("nextMonth").addEventListener("click", () => {
 // =============================
 
 function filtrarTransacoesDoMes() {
-  return transacoes.filter(t => {
-    const data = new Date(t.data);
-    return (
-      data.getMonth() === mesAtual &&
-      data.getFullYear() === anoAtual
-    );
-  });
+  return transacoes.map(t => {
+
+    const dataInicio = new Date(t.dataInicio);
+    const diffMeses =
+      (anoAtual - dataInicio.getFullYear()) * 12 +
+      (mesAtual - dataInicio.getMonth());
+
+    // VERIFICAR SE FOI ENCERRADA
+    if (t.dataFim) {
+      const dataFim = new Date(t.dataFim);
+
+      const diffFim =
+        (anoAtual - dataFim.getFullYear()) * 12 +
+        (mesAtual - dataFim.getMonth());
+
+      if (diffFim > 0) {
+        return null;
+      }
+    }
+
+    // RECEITA NORMAL
+    if (t.tipo === "receita") {
+      if (
+        dataInicio.getMonth() === mesAtual &&
+        dataInicio.getFullYear() === anoAtual
+      ) {
+        return { ...t, valorMes: t.valorTotal };
+      }
+      return null;
+    }
+
+    // DESPESA NORMAL
+    if (t.tipo === "despesa") {
+      if (
+        dataInicio.getMonth() === mesAtual &&
+        dataInicio.getFullYear() === anoAtual
+      ) {
+        return { ...t, valorMes: t.valorTotal };
+      }
+      return null;
+    }
+
+    // DESPESA FIXA
+    if (t.tipo === "despesa_fixa" && diffMeses >= 0) {
+      return { ...t, valorMes: t.valorTotal };
+    }
+
+    // DESPESA PARCELADA
+    if (
+      t.tipo === "despesa_parcelada" &&
+      diffMeses >= 0 &&
+      diffMeses < t.totalParcelas
+    ) {
+      return {
+        ...t,
+        valorMes: t.valorTotal / t.totalParcelas
+      };
+    }
+
+    return null;
+
+  }).filter(Boolean);
 }
 
 // =============================
@@ -169,6 +228,48 @@ function renderizarAnos() {
 }
 
 // =============================
+// ANIMAÇÃO NUMEROS DASHBOARD
+// =============================
+
+function animarNumero(elemento, valorFinal, duracao = 600) {
+  let inicio = 0;
+  const startTime = performance.now();
+
+  function atualizar(currentTime) {
+    const progresso = Math.min((currentTime - startTime) / duracao, 1);
+    const valorAtual = inicio + (valorFinal - inicio) * progresso;
+
+    elemento.textContent = formatarMoeda(valorAtual);
+
+    if (progresso < 1) {
+      requestAnimationFrame(atualizar);
+    } else {
+      elemento.textContent = formatarMoeda(valorFinal);
+    }
+  }
+
+  requestAnimationFrame(atualizar);
+}
+
+// =============================
+// SALÁRIO
+// =============================
+
+const salarioInput = document.getElementById("salarioMensal");
+const salarioAtivo = document.getElementById("salarioAtivo");
+const salvarSalarioBtn = document.getElementById("salvarSalario");
+
+salvarSalarioBtn.addEventListener("click", () => {
+  configuracaoFinanceira.salarioMensal =
+    parseFloat(salarioInput.value) || 0;
+
+  configuracaoFinanceira.ativo = salarioAtivo.checked;
+
+  salvarDados();
+  atualizarSistema();
+});
+
+// =============================
 // CAPTURANDO FORMULÁRIO
 // =============================
 
@@ -210,13 +311,22 @@ form.addEventListener("submit", function(e) {
 
   } else {
     // 🔥 CREATE
+
+    const totalParcelas =
+    tipo === "despesa_parcelada"
+      ? parseInt(document.getElementById("totalParcelas").value)
+      : 0;
+
     const novaTransacao = {
       id: Date.now(),
       tipo,
       descricao,
-      valor,
+      valorTotal: valor,
       categoria,
-      data
+      dataInicio: data,
+      totalParcelas,
+      ativa: true,
+      dataFim: null
     };
 
     transacoes.push(novaTransacao);
@@ -225,6 +335,22 @@ form.addEventListener("submit", function(e) {
   form.reset();
   atualizarSistema();
 });
+
+// =============================
+// CAMPO DE PARCELAS DINAMICO
+// =============================
+
+const tipoSelect = document.getElementById("tipo");
+const parcelasContainer = document.getElementById("parcelasContainer");
+
+tipoSelect.addEventListener("change", function () {
+  if (this.value === "despesa_parcelada") {
+    parcelasContainer.style.display = "block";
+  } else {
+    parcelasContainer.style.display = "none";
+  }
+});
+
 // =============================
 // CÁLCULOS
 // =============================
@@ -235,11 +361,15 @@ function calcularTotais() {
 
   const transacoesFiltradas = filtrarTransacoesDoMes();
 
+  if (configuracaoFinanceira.ativo) {
+    totalReceita += configuracaoFinanceira.salarioMensal;
+  }
+
   transacoesFiltradas.forEach(transacao => {
     if (transacao.tipo === "receita") {
-      totalReceita += transacao.valor;
+      totalReceita += transacao.valorMes;
     } else {
-      totalDespesa += transacao.valor;
+      totalDespesa += transacao.valorMes;
     }
   });
 
@@ -259,20 +389,62 @@ function calcularTotais() {
 function atualizarSistema() {
   const { totalReceita, totalDespesa, saldo } = calcularTotais();
 
-  document.getElementById("totalReceita").textContent =
-    formatarMoeda(totalReceita);
+  animarNumero(document.getElementById("totalReceita"), totalReceita);
+  animarNumero(document.getElementById("totalDespesa"), totalDespesa);
+  animarNumero(document.getElementById("saldoAtual"), saldo);
 
-  document.getElementById("totalDespesa").textContent =
-    formatarMoeda(totalDespesa);
+  const saldoElemento = document.getElementById("saldoAtual");
 
-  document.getElementById("saldoAtual").textContent =
-    formatarMoeda(saldo);
+  saldoElemento.classList.remove("saldo-positivo", "saldo-negativo");
+
+  if (saldo >= 0) {
+    saldoElemento.classList.add("saldo-positivo");
+  } else {
+    saldoElemento.classList.add("saldo-negativo");
+  }
 
   atualizarMeta(totalReceita, saldo);
   renderizarTransacoes();
   atualizarDisplayMes();
 
   salvarDados();
+}
+
+// =============================
+// LOADING
+// =============================
+
+function animarTrocaMes(direcao) {
+  const tabela = document.querySelector(".transactions table");
+
+  tabela.classList.remove("slide-left", "slide-right");
+
+  atualizarSistema();
+
+  tabela.classList.add(direcao === "next" ? "slide-left" : "slide-right");
+
+  setTimeout(() => {
+    tabela.classList.remove("slide-left", "slide-right");
+  }, 300);
+}
+
+// =============================
+// VERIFICAR TIPO DE TRANSAÇÃO
+// =============================
+
+function formatarTipo(tipo) {
+  switch (tipo) {
+    case "receita":
+      return "💰 Receita";
+    case "despesa":
+      return "💸 Despesa";
+    case "despesa_fixa":
+      return "🔁 Despesa Fixa";
+    case "despesa_parcelada":
+      return "💳 Despesa Parcelada";
+    default:
+      return tipo;
+  }
 }
 
 // =============================
@@ -290,18 +462,22 @@ function renderizarTransacoes() {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-        <td>${transacao.tipo === "receita" ? "💰 Receita" : "💸 Despesa"}</td>
+        <td>${formatarTipo(transacao.tipo)}</td>
         <td>${transacao.descricao}</td>
+        <td>${formatarMoeda(transacao.valorMes)}</td>
         <td>${transacao.categoria || "-"}</td>
-        <td>${formatarMoeda(transacao.valor)}</td>
-        <td>${transacao.data}</td>
+        <td>${transacao.dataInicio}</td>
         <td>
             <button onclick="editarTransacao(${transacao.id})" style="background:#2563eb;">
-            ✏️
+              ✏️
             </button>
             <button onclick="deletarTransacao(${transacao.id})">
-            🗑️
+              🗑️
             </button>
+
+            ${transacao.tipo === "despesa_fixa" && transacao.ativa
+              ? `<button onclick="encerrarDespesa(${transacao.id})">⛔</button>`
+              : ""}
         </td>
     `;
 
@@ -351,14 +527,32 @@ function editarTransacao(id) {
 
   document.getElementById("tipo").value = transacao.tipo;
   document.getElementById("descricao").value = transacao.descricao;
-  document.getElementById("valor").value = transacao.valor;
+  document.getElementById("valor").value = transacao.valorTotal;
   document.getElementById("categoria").value = transacao.categoria;
-  document.getElementById("data").value = transacao.data;
+  document.getElementById("data").value = transacao.dataInicio;
 
   modoEdicao = true;
   idEmEdicao = id;
 
   document.querySelector(".btn-add").textContent = "Salvar Alteração";
+}
+
+// =============================
+// ENCERRAR DESPESA FIXA
+// =============================
+
+function encerrarDespesa(id) {
+  transacoes = transacoes.map(t => {
+    if (t.id === id) {
+      return {
+        ...t,
+        dataFim: new Date(anoAtual, mesAtual, 1).toISOString()
+      };
+    }
+    return t;
+  });
+
+  atualizarSistema();
 }
 
 // =============================
@@ -387,7 +581,8 @@ function formatarMoeda(valor) {
 function salvarDados() {
   const dados = {
     transacoes: transacoes,
-    metaPercentual: metaPercentual
+    metaPercentual: metaPercentual,
+    configuracaoFinanceira: configuracaoFinanceira
   };
 
   localStorage.setItem("financeControl", JSON.stringify(dados));
@@ -405,6 +600,11 @@ function carregarDados() {
 
     transacoes = dados.transacoes || [];
     metaPercentual = dados.metaPercentual || 20;
+    configuracaoFinanceira =
+      dados.configuracaoFinanceira || configuracaoFinanceira;
+
+    salarioInput.value = configuracaoFinanceira.salarioMensal;
+    salarioAtivo.checked = configuracaoFinanceira.ativo;
 
     document.getElementById("metaPercent").value = metaPercentual;
   }

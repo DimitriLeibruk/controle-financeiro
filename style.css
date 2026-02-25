@@ -44,7 +44,8 @@ body {
 .month-navigation {
   display: flex;
   align-items: center;
-  gap: 15px;
+  justify-content: center;
+  gap: 20px;
 }
 
 .nav-btn {
@@ -62,13 +63,15 @@ body {
 }
 
 .current-month {
+  display: inline-block;
+  width: 100%;
   font-size: 1.2rem;
   font-weight: bold;
 }
 
 .month-selector {
-  position: relative;
-  cursor: pointer;
+  width: 180px;
+  text-align: center;
 }
 
 .calendar-dropdown {
@@ -118,6 +121,39 @@ body {
   background: #3b82f6;
 }
 
+/* SALÁRIO */
+.salary-config {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.salary-box {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* ANIMAÇÃO TROCAR MES */
+.slide-left {
+  animation: slideLeft 0.3s ease forwards;
+}
+
+.slide-right {
+  animation: slideRight 0.3s ease forwards;
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideRight {
+  from { transform: translateX(-50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
 /* DASHBOARD */
 .dashboard {
   display: flex;
@@ -155,6 +191,14 @@ body {
 
 .saldo p {
   color: #2563eb;
+}
+
+.saldo-positivo {
+  color: #16a34a;
+}
+
+.saldo-negativo {
+  color: #dc2626;
 }
 
 /* FORMULÁRIO */
@@ -204,6 +248,17 @@ input, select {
 
 .btn-add:hover {
   background-color: #334155;
+}
+
+/* Fade */
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.2s ease;
 }
 
 /* TABELA */
