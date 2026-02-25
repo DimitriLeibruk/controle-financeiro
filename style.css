@@ -1,0 +1,270 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: #f4f6f9;
+  color: #333;
+}
+
+/* CONTAINER PADRÃO */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 30px auto;
+}
+
+/* HEADER */
+.header {
+  background-color: #1e293b;
+  color: white;
+  padding: 20px 0;
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 1.8rem;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.month-navigation {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.nav-btn {
+  background: #334155;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.nav-btn:hover {
+  background: #475569;
+}
+
+.current-month {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.month-selector {
+  position: relative;
+  cursor: pointer;
+}
+
+.calendar-dropdown {
+  position: absolute;
+  top: 45px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 260px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  z-index: 100;
+}
+
+.hidden {
+  display: none;
+}
+
+.calendar-header {
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.calendar-item {
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.calendar-item:hover {
+  background: #334155;
+}
+
+.calendar-item.active {
+  background: #3b82f6;
+}
+
+/* DASHBOARD */
+.dashboard {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 1;
+  min-width: 250px;
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+/* CORES DOS CARDS */
+.receita p {
+  color: #16a34a;
+}
+
+.despesa p {
+  color: #dc2626;
+}
+
+.saldo p {
+  color: #2563eb;
+}
+
+/* FORMULÁRIO */
+.form-section {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.form-section h2 {
+  margin-bottom: 20px;
+}
+
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+input, select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.btn-add {
+  grid-column: 1 / -1;
+  padding: 12px;
+  background-color: #1e293b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-add:hover {
+  background-color: #334155;
+}
+
+/* TABELA */
+.transactions {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.transactions h2 {
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #e2e8f0;
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+/* META FINANCEIRA */
+.meta {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.meta h2 {
+  margin-bottom: 15px;
+}
+
+.meta-config {
+  margin-bottom: 15px;
+}
+
+.meta-info p {
+  margin-bottom: 5px;
+}
+
+.progress-bar {
+  margin-top: 10px;
+  width: 100%;
+  height: 20px;
+  background-color: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  width: 0%;
+  background-color: #7c3aed;
+  transition: width 0.3s ease;
+}
