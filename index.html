@@ -35,94 +35,137 @@
     </div>
   </header>
 
-  <!-- SALÁRIO -->
-  <section class="salary-config container">
-    <h2>Configuração de Salário</h2>
+  <section class="top-section container">
 
-    <div class="salary-box">
-      <label>
-        <input type="checkbox" id="salarioAtivo">
-        Utilizar salário fixo mensal
-      </label>
+    <!-- SALÁRIO -->
+    <div class="salary-area">
+      <section class="salary-config">
+        <h2>Configuração de Salário</h2>
 
-      <input type="number" id="salarioMensal" placeholder="Valor do salário">
-      <button id="salvarSalario">Salvar</button>
+        <div class="salary-box">
+          <label>
+            <input type="checkbox" id="salarioAtivo">
+            Utilizar salário fixo mensal
+          </label>
+
+          <input type="number" id="salarioMensal" placeholder="Valor do salário">
+          <button id="salvarSalario">Salvar</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard-area">
+      <section class="dashboard">
+
+        <div class="card saldo">
+          <h2>Saldo em Conta</h2>
+          <p id="saldoEmConta">R$ 0,00</p>
+        </div>
+
+        <div class="card despesa">
+          <h2>Despesa Total</h2>
+          <p id="despesaTotal">R$ 0,00</p>
+        </div>
+
+        <div class="card saldo">
+          <h2>Saldo Atual</h2>
+          <p id="saldoAtual">R$ 0,00</p>
+        </div>
+
+        <div class="card receita">
+          <h2>Receita Total</h2>
+          <p id="receitaTotal">R$ 0,00</p>
+        </div>
+
+        <div class="card despesa">
+          <h2>Valor a Pagar</h2>
+          <p id="valorAPagar">R$ 0,00</p>
+        </div>
+
+        <div class="card saldo">
+          <h2>Saldo Final</h2>
+          <p id="saldoFinal">R$ 0,00</p>
+        </div>
+
+      </section>
     </div>
   </section>
 
-  <!-- DASHBOARD -->
-  <section class="dashboard container">
+  <section class="middle-section container">
 
-    <div class="card receita">
-      <h2>Receita Total</h2>
-      <p id="totalReceita">R$ 0,00</p>
+    <!-- FORMULÁRIO -->
+    <div class="form-area">
+      <section class="form-section">
+        <h2>Adicionar Transação</h2>
+
+        <form id="transactionForm">
+
+          <div class="form-group">
+            <label for="tipo">Tipo</label>
+            <select id="tipo" required>
+              <option value="">Selecione</option>
+              <option value="receita">Receita</option>
+              <option value="despesa">Despesa</option>
+              <option value="despesa_fixa">Despesa Fixa</option>
+              <option value="despesa_parcelada">Despesa Parcelada</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <input type="text" id="descricao" required>
+          </div>
+
+          <div class="form-group">
+            <label for="valor">Valor</label>
+            <input type="number" id="valor" step="0.01" required>
+          </div>
+
+          <div class="form-group">
+            <label for="categoria">Categoria</label>
+            <select id="categoria">
+              <option value="">Selecione</option>
+              <option value="Moradia">Moradia</option>
+              <option value="Alimentação">Alimentação</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Lazer">Lazer</option>
+              <option value="Saúde">Saúde</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="data">Data</label>
+            <input type="date" id="data" required>
+          </div>
+
+          <div class="form-group" id="parcelasContainer" style="display:none;">
+            <label for="totalParcelas">Quantidade de parcelas</label>
+            <input type="number" id="totalParcelas" min="2">
+          </div>
+
+          <div class="form-group" id="formaPagamentoContainer" style="display:none;">
+            <label>Forma de Pagamento</label>
+            <select id="formaPagamento">
+              <option value="debito">Débito</option>
+              <option value="credito">Crédito</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-add">Adicionar</button>
+
+        </form>
+      </section>
     </div>
 
-    <div class="card despesa">
-      <h2>Despesa Total</h2>
-      <p id="totalDespesa">R$ 0,00</p>
+    <!-- LISTA DE CONTROLE -->
+    <div class="payment-control-area">
+      <div class="payment-control">
+        <h2>Controle de Pagamentos</h2>
+        <div id="paymentList"></div>
+      </div>
     </div>
-
-    <div class="card saldo">
-      <h2>Saldo Atual</h2>
-      <p id="saldoAtual">R$ 0,00</p>
-    </div>
-
-  </section>
-
-  <!-- FORMULÁRIO -->
-  <section class="form-section container">
-    <h2>Adicionar Transação</h2>
-
-    <form id="transactionForm">
-
-      <div class="form-group">
-        <label for="tipo">Tipo</label>
-        <select id="tipo" required>
-          <option value="">Selecione</option>
-          <option value="receita">Receita</option>
-          <option value="despesa">Despesa</option>
-          <option value="despesa_fixa">Despesa Fixa</option>
-          <option value="despesa_parcelada">Despesa Parcelada</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="descricao">Descrição</label>
-        <input type="text" id="descricao" required>
-      </div>
-
-      <div class="form-group">
-        <label for="valor">Valor</label>
-        <input type="number" id="valor" step="0.01" required>
-      </div>
-
-      <div class="form-group">
-        <label for="categoria">Categoria</label>
-        <select id="categoria">
-          <option value="">Selecione</option>
-          <option value="Moradia">Moradia</option>
-          <option value="Alimentação">Alimentação</option>
-          <option value="Transporte">Transporte</option>
-          <option value="Lazer">Lazer</option>
-          <option value="Saúde">Saúde</option>
-          <option value="Outros">Outros</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="data">Data</label>
-        <input type="date" id="data" required>
-      </div>
-
-      <div class="form-group" id="parcelasContainer" style="display:none;">
-        <label for="totalParcelas">Quantidade de parcelas</label>
-        <input type="number" id="totalParcelas" min="2">
-      </div>
-
-      <button type="submit" class="btn-add">Adicionar</button>
-
-    </form>
   </section>
 
   <!-- LISTA DE TRANSAÇÕES -->
@@ -135,6 +178,7 @@
           <th>Tipo</th>
           <th>Descrição</th>
           <th>Valor</th>
+          <th>Pagamento</th>
           <th>Categoria</th>
           <th>Data</th>
           <th>Ações</th>

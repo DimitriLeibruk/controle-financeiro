@@ -7,6 +7,7 @@ let configuracaoFinanceira = {
   ativo: false
 };
 let transacoes = [];
+let pagamentosDoMes = {};
 let metaPercentual = 20;
 let modoEdicao = false;
 let idEmEdicao = null;
@@ -283,6 +284,10 @@ form.addEventListener("submit", function(e) {
   const valor = parseFloat(document.getElementById("valor").value);
   const categoria = document.getElementById("categoria").value;
   const data = document.getElementById("data").value;
+  const formaPagamento =
+    tipo.includes("despesa")
+      ? document.getElementById("formaPagamento").value
+      : null;
 
   if (!tipo || !descricao || !valor || !data) {
     alert("Preencha todos os campos obrigatórios!");
@@ -321,6 +326,7 @@ form.addEventListener("submit", function(e) {
       id: Date.now(),
       tipo,
       descricao,
+      formaPagamento,
       valorTotal: valor,
       categoria,
       dataInicio: data,
@@ -333,6 +339,10 @@ form.addEventListener("submit", function(e) {
   }
 
   form.reset();
+
+  parcelasContainer.style.display = "none";
+  formaPagamentoContainer.style.display = "none";
+
   atualizarSistema();
 });
 
@@ -342,13 +352,24 @@ form.addEventListener("submit", function(e) {
 
 const tipoSelect = document.getElementById("tipo");
 const parcelasContainer = document.getElementById("parcelasContainer");
+const formaPagamentoContainer = document.getElementById("formaPagamentoContainer");
 
 tipoSelect.addEventListener("change", function () {
+
+  // Mostrar forma de pagamento se for qualquer tipo de despesa
+  if (this.value.includes("despesa")) {
+    formaPagamentoContainer.style.display = "block";
+  } else {
+    formaPagamentoContainer.style.display = "none";
+  }
+
+  // Mostrar parcelas apenas se for despesa parcelada
   if (this.value === "despesa_parcelada") {
     parcelasContainer.style.display = "block";
   } else {
     parcelasContainer.style.display = "none";
   }
+
 });
 
 // =============================
@@ -356,30 +377,108 @@ tipoSelect.addEventListener("change", function () {
 // =============================
 
 function calcularTotais() {
-  let totalReceita = 0;
-  let totalDespesa = 0;
+
+  let receitaTotal = 0;
+  let despesaTotal = 0;
+  let saldoEmConta = 0;
+  let valorAPagar = 0;
 
   const transacoesFiltradas = filtrarTransacoesDoMes();
 
   if (configuracaoFinanceira.ativo) {
-    totalReceita += configuracaoFinanceira.salarioMensal;
+    receitaTotal += configuracaoFinanceira.salarioMensal;
+    saldoEmConta += configuracaoFinanceira.salarioMensal;
   }
 
-  transacoesFiltradas.forEach(transacao => {
-    if (transacao.tipo === "receita") {
-      totalReceita += transacao.valorMes;
-    } else {
-      totalDespesa += transacao.valorMes;
+  transacoesFiltradas.forEach(t => {
+
+    if (t.tipo === "receita") {
+      receitaTotal += t.valorMes;
+      saldoEmConta += t.valorMes;
     }
+
+    if (t.tipo.includes("despesa")) {
+
+      despesaTotal += t.valorMes;
+
+      if (t.formaPagamento === "debito") {
+        saldoEmConta -= t.valorMes;
+      }
+
+      if (t.formaPagamento === "credito") {
+
+        const chaveMes = `${anoAtual}-${String(mesAtual + 1).padStart(2,"0")}`;
+
+        const pago = pagamentosDoMes[chaveMes]?.[t.id];
+
+        if (!pago) {
+          valorAPagar += t.valorMes;
+        }
+      }
+    }
+
   });
 
-  const saldo = totalReceita - totalDespesa;
+  const saldoAtual = saldoEmConta;
+  const saldoFinal = saldoEmConta - valorAPagar;
 
   return {
-    totalReceita,
-    totalDespesa,
-    saldo
+    receitaTotal,
+    despesaTotal,
+    saldoEmConta,
+    valorAPagar,
+    saldoAtual,
+    saldoFinal
   };
+}
+
+// =============================
+// CONTROLE PAGAMENTOS
+// =============================
+
+function renderizarControlePagamentos() {
+  const container = document.getElementById("paymentList");
+  container.innerHTML = "";
+
+  const chaveMes = `${anoAtual}-${String(mesAtual + 1).padStart(2, "0")}`;
+
+  if (!pagamentosDoMes[chaveMes]) {
+    pagamentosDoMes[chaveMes] = {};
+  }
+
+  const transacoesFiltradas = filtrarTransacoesDoMes()
+    .filter(t => t.tipo === "despesa_fixa" || t.tipo === "despesa_parcelada");
+
+  transacoesFiltradas.forEach(transacao => {
+    const div = document.createElement("div");
+
+    const pago = pagamentosDoMes[chaveMes][transacao.id] || false;
+
+    div.innerHTML = `
+      <label>
+        <input type="checkbox"
+          ${pago ? "checked" : ""}
+          onchange="togglePagamento(${transacao.id})">
+        ${transacao.descricao}
+      </label>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+function togglePagamento(id) {
+  const chaveMes = `${anoAtual}-${String(mesAtual + 1).padStart(2, "0")}`;
+
+  if (!pagamentosDoMes[chaveMes]) {
+    pagamentosDoMes[chaveMes] = {};
+  }
+
+  pagamentosDoMes[chaveMes][id] =
+    !pagamentosDoMes[chaveMes][id];
+
+  salvarDados();
+  atualizarSistema();
 }
 
 // =============================
@@ -387,25 +486,38 @@ function calcularTotais() {
 // =============================
 
 function atualizarSistema() {
-  const { totalReceita, totalDespesa, saldo } = calcularTotais();
 
-  animarNumero(document.getElementById("totalReceita"), totalReceita);
-  animarNumero(document.getElementById("totalDespesa"), totalDespesa);
-  animarNumero(document.getElementById("saldoAtual"), saldo);
+  const {
+    receitaTotal,
+    despesaTotal,
+    saldoEmConta,
+    valorAPagar,
+    saldoAtual,
+    saldoFinal
+  } = calcularTotais();
+
+  animarNumero(document.getElementById("receitaTotal"), receitaTotal);
+  animarNumero(document.getElementById("despesaTotal"), despesaTotal);
+  animarNumero(document.getElementById("saldoEmConta"), saldoEmConta);
+  animarNumero(document.getElementById("valorAPagar"), valorAPagar);
+  animarNumero(document.getElementById("saldoAtual"), saldoAtual);
+  animarNumero(document.getElementById("saldoFinal"), saldoFinal);
 
   const saldoElemento = document.getElementById("saldoAtual");
 
   saldoElemento.classList.remove("saldo-positivo", "saldo-negativo");
 
-  if (saldo >= 0) {
+  if (saldoAtual >= 0) {
     saldoElemento.classList.add("saldo-positivo");
   } else {
     saldoElemento.classList.add("saldo-negativo");
   }
 
-  atualizarMeta(totalReceita, saldo);
+  atualizarMeta(receitaTotal, saldoAtual);
+
   renderizarTransacoes();
   atualizarDisplayMes();
+  renderizarControlePagamentos();
 
   salvarDados();
 }
@@ -465,6 +577,13 @@ function renderizarTransacoes() {
         <td>${formatarTipo(transacao.tipo)}</td>
         <td>${transacao.descricao}</td>
         <td>${formatarMoeda(transacao.valorMes)}</td>
+        <td>
+          ${transacao.formaPagamento
+            ? transacao.formaPagamento === "debito"
+              ? "💳 Débito"
+              : "🧾 Crédito"
+            : "-"}
+        </td>
         <td>${transacao.categoria || "-"}</td>
         <td>${transacao.dataInicio}</td>
         <td>
@@ -582,7 +701,8 @@ function salvarDados() {
   const dados = {
     transacoes: transacoes,
     metaPercentual: metaPercentual,
-    configuracaoFinanceira: configuracaoFinanceira
+    configuracaoFinanceira: configuracaoFinanceira,
+    pagamentosDoMes: pagamentosDoMes
   };
 
   localStorage.setItem("financeControl", JSON.stringify(dados));
@@ -602,6 +722,7 @@ function carregarDados() {
     metaPercentual = dados.metaPercentual || 20;
     configuracaoFinanceira =
       dados.configuracaoFinanceira || configuracaoFinanceira;
+      pagamentosDoMes = dados.pagamentosDoMes || {};
 
     salarioInput.value = configuracaoFinanceira.salarioMensal;
     salarioAtivo.checked = configuracaoFinanceira.ativo;
