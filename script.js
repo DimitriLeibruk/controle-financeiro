@@ -8,6 +8,7 @@ let configuracaoFinanceira = {
 };
 let transacoes = [];
 let pagamentosDoMes = {};
+let saldoManual = 0;
 let metaPercentual = 20;
 let modoEdicao = false;
 let idEmEdicao = null;
@@ -253,18 +254,77 @@ function animarNumero(elemento, valorFinal, duracao = 600) {
 }
 
 // =============================
+// BOTÃO DE EDITAR SALDO
+// =============================
+
+document.getElementById("editarSaldoBtn").addEventListener("click", () => {
+
+  const novoSaldo = prompt("Digite o saldo atual em conta:");
+
+  if (novoSaldo !== null) {
+    saldoManual = parseFloat(novoSaldo) || 0;
+    salvarDados();
+    atualizarSistema();
+  }
+
+});
+
+// =============================
 // SALÁRIO
 // =============================
 
 const salarioInput = document.getElementById("salarioMensal");
-const salarioAtivo = document.getElementById("salarioAtivo");
 const salvarSalarioBtn = document.getElementById("salvarSalario");
 
 salvarSalarioBtn.addEventListener("click", () => {
-  configuracaoFinanceira.salarioMensal =
-    parseFloat(salarioInput.value) || 0;
 
-  configuracaoFinanceira.ativo = salarioAtivo.checked;
+  const valorSalario = parseFloat(salarioInput.value) || 0;
+
+  if (!valorSalario) {
+    alert("Digite um valor válido.");
+    return;
+  }
+
+  const salarioFixoSelecionado =
+    document.getElementById("salarioFixo").checked;
+
+  const salarioMensalSelecionado =
+    document.getElementById("salarioMensalUnico").checked;
+
+  if (!salarioFixoSelecionado && !salarioMensalSelecionado) {
+    alert("Selecione uma opção.");
+    return;
+  }
+
+  if (salarioFixoSelecionado) {
+
+    configuracaoFinanceira.salarioMensal = valorSalario;
+    configuracaoFinanceira.ativo = true;
+
+  }
+
+  if (salarioMensalSelecionado) {
+
+    // 🔥 Criar receita automática apenas para este mês
+
+    const novaReceita = {
+      id: Date.now(),
+      tipo: "receita",
+      descricao: "Salário do mês",
+      formaPagamento: null,
+      valorTotal: valorSalario,
+      categoria: "Salário",
+      dataInicio: new Date(anoAtual, mesAtual, 1).toISOString(),
+      totalParcelas: 1,
+      ativa: true,
+      dataFim: null
+    };
+
+    transacoes.push(novaReceita);
+
+  }
+
+  salarioInput.value = "";
 
   salvarDados();
   atualizarSistema();
@@ -318,9 +378,9 @@ form.addEventListener("submit", function(e) {
     // 🔥 CREATE
 
     const totalParcelas =
-    tipo === "despesa_parcelada"
-      ? parseInt(document.getElementById("totalParcelas").value)
-      : 0;
+      tipo === "despesa_parcelada"
+        ? parseInt(document.getElementById("totalParcelas").value) || 1
+        : 1;
 
     const novaTransacao = {
       id: Date.now(),
@@ -340,9 +400,6 @@ form.addEventListener("submit", function(e) {
 
   form.reset();
 
-  parcelasContainer.style.display = "none";
-  formaPagamentoContainer.style.display = "none";
-
   atualizarSistema();
 });
 
@@ -351,23 +408,17 @@ form.addEventListener("submit", function(e) {
 // =============================
 
 const tipoSelect = document.getElementById("tipo");
-const parcelasContainer = document.getElementById("parcelasContainer");
-const formaPagamentoContainer = document.getElementById("formaPagamentoContainer");
 
 tipoSelect.addEventListener("change", function () {
 
-  // Mostrar forma de pagamento se for qualquer tipo de despesa
-  if (this.value.includes("despesa")) {
-    formaPagamentoContainer.style.display = "block";
-  } else {
-    formaPagamentoContainer.style.display = "none";
-  }
+  const parcelasInput = document.getElementById("totalParcelas");
 
-  // Mostrar parcelas apenas se for despesa parcelada
   if (this.value === "despesa_parcelada") {
-    parcelasContainer.style.display = "block";
+    parcelasInput.disabled = false;
+    parcelasInput.value = 1;
   } else {
-    parcelasContainer.style.display = "none";
+    parcelasInput.disabled = true;
+    parcelasInput.value = 1;
   }
 
 });
@@ -380,7 +431,7 @@ function calcularTotais() {
 
   let receitaTotal = 0;
   let despesaTotal = 0;
-  let saldoEmConta = 0;
+  let saldoEmConta = saldoManual;
   let valorAPagar = 0;
 
   const transacoesFiltradas = filtrarTransacoesDoMes();
@@ -413,6 +464,8 @@ function calcularTotais() {
 
         if (!pago) {
           valorAPagar += t.valorMes;
+        } else {
+          saldoEmConta -= t.valorMes;
         }
       }
     }
@@ -451,15 +504,23 @@ function renderizarControlePagamentos() {
 
   transacoesFiltradas.forEach(transacao => {
     const div = document.createElement("div");
+    div.classList.add("payment-item");
 
     const pago = pagamentosDoMes[chaveMes][transacao.id] || false;
 
+    if (pago) {
+      div.classList.add("payment-paid");
+    }
+
     div.innerHTML = `
-      <label>
+      <label class="payment-label">
         <input type="checkbox"
           ${pago ? "checked" : ""}
           onchange="togglePagamento(${transacao.id})">
-        ${transacao.descricao}
+        <span class="payment-name">${transacao.descricao}</span>
+        <span class="payment-value">
+          ${formatarMoeda(transacao.valorMes)}
+        </span>
       </label>
     `;
 
@@ -573,8 +634,26 @@ function renderizarTransacoes() {
     transacoesFiltradas.forEach(transacao => {
     const tr = document.createElement("tr");
 
+    function calcularParcelaAtual(transacao) {
+
+      const dataInicio = new Date(transacao.dataInicio);
+
+      const diffMeses =
+        (anoAtual - dataInicio.getFullYear()) * 12 +
+        (mesAtual - dataInicio.getMonth());
+
+      return diffMeses + 1;
+    }
+
     tr.innerHTML = `
-        <td>${formatarTipo(transacao.tipo)}</td>
+        <td>
+          ${formatarTipo(transacao.tipo)}
+          ${transacao.tipo === "despesa_parcelada"
+            ? `<br><small>
+                ${calcularParcelaAtual(transacao)} / ${transacao.totalParcelas}
+              </small>`
+            : ""}
+        </td>
         <td>${transacao.descricao}</td>
         <td>${formatarMoeda(transacao.valorMes)}</td>
         <td>
@@ -702,7 +781,8 @@ function salvarDados() {
     transacoes: transacoes,
     metaPercentual: metaPercentual,
     configuracaoFinanceira: configuracaoFinanceira,
-    pagamentosDoMes: pagamentosDoMes
+    pagamentosDoMes: pagamentosDoMes,
+    saldoManual: saldoManual
   };
 
   localStorage.setItem("financeControl", JSON.stringify(dados));
@@ -717,17 +797,22 @@ function carregarDados() {
 
   if (dadosSalvos) {
     const dados = JSON.parse(dadosSalvos);
+    
 
     transacoes = dados.transacoes || [];
     metaPercentual = dados.metaPercentual || 20;
+    saldoManual = dados.saldoManual || 0;
     configuracaoFinanceira =
       dados.configuracaoFinanceira || configuracaoFinanceira;
       pagamentosDoMes = dados.pagamentosDoMes || {};
 
     salarioInput.value = configuracaoFinanceira.salarioMensal;
-    salarioAtivo.checked = configuracaoFinanceira.ativo;
 
     document.getElementById("metaPercent").value = metaPercentual;
+  }
+
+  if (configuracaoFinanceira.ativo) {
+    document.getElementById("salarioFixo").checked = true;
   }
 
   atualizarSistema();
@@ -739,3 +824,4 @@ function carregarDados() {
 
 carregarDados();
 atualizarDisplayMes();
+document.getElementById("totalParcelas").disabled = true;

@@ -43,13 +43,21 @@
         <h2>Configuração de Salário</h2>
 
         <div class="salary-box">
+
           <label>
-            <input type="checkbox" id="salarioAtivo">
+            <input type="radio" name="tipoSalario" value="fixo" id="salarioFixo">
             Utilizar salário fixo mensal
           </label>
 
+          <label>
+            <input type="radio" name="tipoSalario" value="mensal" id="salarioMensalUnico">
+            Adicionar salário apenas para este mês
+          </label>
+
           <input type="number" id="salarioMensal" placeholder="Valor do salário">
+
           <button id="salvarSalario">Salvar</button>
+
         </div>
       </section>
     </div>
@@ -59,7 +67,10 @@
       <section class="dashboard">
 
         <div class="card saldo">
-          <h2>Saldo em Conta</h2>
+          <h2>
+            Saldo em Conta
+            <button id="editarSaldoBtn" style="margin-left: 10px;">✏️</button>
+          </h2>
           <p id="saldoEmConta">R$ 0,00</p>
         </div>
 
@@ -123,6 +134,19 @@
           </div>
 
           <div class="form-group">
+            <label for="formaPagamento">Forma de pagamento</label>
+            <select id="formaPagamento">
+              <option value="debito">Débito</option>
+              <option value="credito">Crédito</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="totalParcelas">Quantidade de parcelas</label>
+            <input type="number" id="totalParcelas" min="1" value="1">
+          </div>
+
+          <div class="form-group">
             <label for="categoria">Categoria</label>
             <select id="categoria">
               <option value="">Selecione</option>
@@ -135,22 +159,9 @@
             </select>
           </div>
 
-          <div class="form-group">
+          <div class="form-group full-width">
             <label for="data">Data</label>
             <input type="date" id="data" required>
-          </div>
-
-          <div class="form-group" id="parcelasContainer" style="display:none;">
-            <label for="totalParcelas">Quantidade de parcelas</label>
-            <input type="number" id="totalParcelas" min="2">
-          </div>
-
-          <div class="form-group" id="formaPagamentoContainer" style="display:none;">
-            <label>Forma de Pagamento</label>
-            <select id="formaPagamento">
-              <option value="debito">Débito</option>
-              <option value="credito">Crédito</option>
-            </select>
           </div>
 
           <button type="submit" class="btn-add">Adicionar</button>

@@ -137,7 +137,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 30px;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* SALÁRIO */
@@ -229,15 +229,91 @@ body {
 }
 
 /* CONTROLE DE PAGAMENTO */
+.payment-control-area {
+  display: flex;
+}
+
 .payment-control {
   background-color: white;
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .payment-control h2 {
   margin-bottom: 15px;
+}
+
+#paymentList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+  max-height: 300px;   
+  overflow-y: auto;    
+  padding-right: 5px;
+}
+
+#paymentList::-webkit-scrollbar {
+  width: 6px;
+}
+
+#paymentList::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+#paymentList::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.payment-item {
+  background: #f8fafc;
+  padding: 12px 15px;
+  border-radius: 8px;
+  transition: 0.2s;
+  border: 1px solid #e2e8f0;
+}
+
+.payment-item:hover {
+  background: #eef2f7;
+}
+
+.payment-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  width: 100%;
+}
+
+.payment-label input {
+  margin-right: 10px;
+  transform: scale(1.2);
+}
+
+.payment-name {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.payment-value {
+  font-weight: bold;
+  color: #dc2626;
+}
+
+/* Item pago */
+.payment-paid {
+  opacity: 0.5;
+  background: #f1f5f9;
+}
+
+.payment-paid .payment-value {
+  color: #64748b;
 }
 
 /* FORMULÁRIO */
