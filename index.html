@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controle financeiro</title>
   <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -183,41 +185,127 @@
   <section class="transactions container">
     <h2>Transações</h2>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Descrição</th>
-          <th>Valor</th>
-          <th>Pagamento</th>
-          <th>Categoria</th>
-          <th>Data</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="transactionList">
-        <!-- JS vai inserir aqui -->
-      </tbody>
-    </table>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Pagamento</th>
+            <th>Categoria</th>
+            <th>Data</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="transactionList">
+          <!-- JS vai inserir aqui -->
+        </tbody>
+      </table>
+    </div>
   </section>
 
-  <!-- META FINANCEIRA -->
-  <section class="meta container">
-    <h2>Meta Financeira</h2>
+  <!-- MODAL DE EDIÇÃO -->
+  <div id="editModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Editar Transação</h2>
 
-    <div class="meta-config">
-      <label for="metaPercent">Percentual para guardar (%)</label>
-      <input type="number" id="metaPercent" value="20" min="0" max="100">
+      <div class="modal-form">
+        <label>Tipo</label>
+        <select id="editTipo">
+          <option value="receita">Receita</option>
+          <option value="despesa">Despesa</option>
+          <option value="despesa_fixa">Despesa Fixa</option>
+          <option value="despesa_parcelada">Despesa Parcelada</option>
+        </select>
+
+        <label>Descrição</label>
+        <input type="text" id="editDescricao">
+
+        <label>Valor</label>
+        <input type="number" id="editValor">
+
+        <label>Forma de Pagamento</label>
+        <select id="editFormaPagamento">
+          <option value="debito">Débito</option>
+          <option value="credito">Crédito</option>
+        </select>
+
+        <label>Categoria</label>
+        <select id="editCategoria">
+          <option value="Moradia">Moradia</option>
+          <option value="Alimentação">Alimentação</option>
+          <option value="Transporte">Transporte</option>
+          <option value="Lazer">Lazer</option>
+          <option value="Saúde">Saúde</option>
+          <option value="Outros">Outros</option>
+        </select>
+
+        <label>Data</label>
+        <input type="date" id="editData">
+
+        <div class="modal-buttons">
+          <button id="confirmEdit">Salvar</button>
+          <button id="cancelEdit" class="cancel-btn">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="bottom-section container">
+
+    <!-- METAS -->
+    <div class="meta-area">
+      <section class="meta">
+        <h2>Metas Financeiras</h2>
+
+        <div class="meta-config">
+
+          <h3>Meta Percentual</h3>
+          <input type="number" id="metaPercent" value="20" min="0" max="100">
+
+          <h3>Meta Valor Fixo Mensal</h3>
+          <input type="number" id="metaValorFixo" placeholder="Ex: 1000">
+
+          <h3>Meta Anual</h3>
+          <input type="number" id="metaAnual" placeholder="Ex: 20000">
+
+        </div>
+
+        <div class="meta-info">
+          <p>Meta Ideal: <span id="metaIdeal">R$ 0,00</span></p>
+          <p>Economia Atual: <span id="metaAtual">R$ 0,00</span></p>
+          <p>Meta Anual Acumulada: <span id="metaAnualAtual">R$ 0,00</span></p>
+        </div>
+
+        <div class="progress-bar">
+          <div class="progress" id="metaProgress"></div>
+        </div>
+
+        <hr style="margin:20px 0;">
+
+        <h3>Metas por Objetivo</h3>
+
+        <div class="objetivo-config">
+          <input type="text" id="objetivoNome" placeholder="Ex: Novo PC">
+          <input type="number" id="objetivoValor" placeholder="Valor objetivo">
+          <button id="addObjetivo">Adicionar</button>
+        </div>
+
+        <div id="listaObjetivos"></div>
+
+      </section>
     </div>
 
-    <div class="meta-info">
-      <p>Meta ideal: <span id="metaIdeal">R$ 0,00</span></p>
-      <p>Economia atual: <span id="metaAtual">R$ 0,00</span></p>
-      <p>Status: <span id="metaStatus">-</span></p>
-    </div>
+    <!-- GRÁFICOS -->
+    <div class="graficos-area">
+      <section class="graficos">
+        <h2>Análise Financeira</h2>
 
-    <div class="progress-bar">
-      <div class="progress" id="metaProgress"></div>
+        <canvas id="graficoMensal"></canvas>
+        <canvas id="graficoCategoria" style="margin-top:30px;"></canvas>
+
+      </section>
     </div>
 
   </section>

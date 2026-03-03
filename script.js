@@ -4,7 +4,8 @@
 
 let configuracaoFinanceira = {
   salarioMensal: 0,
-  ativo: false
+  ativo: false,
+  dataInicio: null
 };
 let transacoes = [];
 let pagamentosDoMes = {};
@@ -16,6 +17,12 @@ let hoje = new Date();
 let mesAtual = hoje.getMonth(); // 0-11
 let anoAtual = hoje.getFullYear();
 let modoCalendario = "mes";
+
+let metaValorFixo = 0;
+let metaAnual = 0;
+let objetivos = [];
+let graficoMensal;
+let graficoCategoria;
 
 
 // =============================
@@ -64,14 +71,46 @@ document.getElementById("nextMonth").addEventListener("click", () => {
 // =============================
 
 function filtrarTransacoesDoMes() {
-  return transacoes.map(t => {
+
+  let lista = [...transacoes];
+
+  // 🔥 SALÁRIO FIXO COMO TRANSAÇÃO AUTOMÁTICA
+  if (configuracaoFinanceira.ativo && configuracaoFinanceira.dataInicio) {
+
+    const inicio = new Date(configuracaoFinanceira.dataInicio);
+
+    const anoInicio = inicio.getFullYear();
+    const mesInicio = inicio.getMonth();
+
+    const ehMesPosteriorOuIgual =
+      anoAtual > anoInicio ||
+      (anoAtual === anoInicio && mesAtual >= mesInicio);
+
+    if (ehMesPosteriorOuIgual) {
+
+      lista.push({
+        id: "salario_fixo",
+        tipo: "receita",
+        descricao: "Salário Fixo Mensal",
+        valorTotal: configuracaoFinanceira.salarioMensal,
+        categoria: "Salário",
+        dataInicio: new Date(anoAtual, mesAtual, 1).toISOString(),
+        totalParcelas: 1,
+        formaPagamento: null,
+        virtual: true
+      });
+
+    }
+  }
+
+  return lista.map(t => {
 
     const dataInicio = new Date(t.dataInicio);
+
     const diffMeses =
       (anoAtual - dataInicio.getFullYear()) * 12 +
       (mesAtual - dataInicio.getMonth());
 
-    // VERIFICAR SE FOI ENCERRADA
     if (t.dataFim) {
       const dataFim = new Date(t.dataFim);
 
@@ -84,7 +123,6 @@ function filtrarTransacoesDoMes() {
       }
     }
 
-    // RECEITA NORMAL
     if (t.tipo === "receita") {
       if (
         dataInicio.getMonth() === mesAtual &&
@@ -95,7 +133,6 @@ function filtrarTransacoesDoMes() {
       return null;
     }
 
-    // DESPESA NORMAL
     if (t.tipo === "despesa") {
       if (
         dataInicio.getMonth() === mesAtual &&
@@ -106,12 +143,16 @@ function filtrarTransacoesDoMes() {
       return null;
     }
 
-    // DESPESA FIXA
     if (t.tipo === "despesa_fixa" && diffMeses >= 0) {
-      return { ...t, valorMes: t.valorTotal };
+
+      const chaveMes = `${anoAtual}-${String(mesAtual + 1).padStart(2,"0")}`;
+
+      const valorMes =
+        t.historicoValores?.[chaveMes] ?? t.valorTotal;
+
+      return { ...t, valorMes };
     }
 
-    // DESPESA PARCELADA
     if (
       t.tipo === "despesa_parcelada" &&
       diffMeses >= 0 &&
@@ -126,6 +167,7 @@ function filtrarTransacoesDoMes() {
     return null;
 
   }).filter(Boolean);
+
 }
 
 // =============================
@@ -301,6 +343,8 @@ salvarSalarioBtn.addEventListener("click", () => {
     configuracaoFinanceira.salarioMensal = valorSalario;
     configuracaoFinanceira.ativo = true;
 
+    configuracaoFinanceira.dataInicio =
+      `${anoAtual}-${String(mesAtual + 1).padStart(2,"0")}-01`;
   }
 
   if (salarioMensalSelecionado) {
@@ -355,25 +399,53 @@ form.addEventListener("submit", function(e) {
   }
 
   if (modoEdicao) {
-    // 🔥 UPDATE
+
+    const totalParcelas =
+      tipo === "despesa_parcelada"
+        ? parseInt(document.getElementById("totalParcelas").value) || 1
+        : 1;
+
+    const chaveMes = `${anoAtual}-${String(mesAtual + 1).padStart(2,"0")}`;
+
     transacoes = transacoes.map(t => {
+
       if (t.id === idEmEdicao) {
+
+        // 🔥 SE FOR DESPESA FIXA
+        if (t.tipo === "despesa_fixa") {
+
+          return {
+            ...t,
+            descricao,
+            categoria,
+            formaPagamento,
+            historicoValores: {
+              ...t.historicoValores,
+              [chaveMes]: valor
+            }
+          };
+
+        }
+
+        // 🔥 OUTROS TIPOS
         return {
           ...t,
           tipo,
           descricao,
-          valor,
+          valorTotal: valor,
           categoria,
-          data
+          dataInicio: data,
+          formaPagamento,
+          totalParcelas
         };
       }
+
       return t;
     });
 
     modoEdicao = false;
     idEmEdicao = null;
     document.querySelector(".btn-add").textContent = "Adicionar";
-
   } else {
     // 🔥 CREATE
 
@@ -381,6 +453,8 @@ form.addEventListener("submit", function(e) {
       tipo === "despesa_parcelada"
         ? parseInt(document.getElementById("totalParcelas").value) || 1
         : 1;
+
+    const chaveMes = `${anoAtual}-${String(mesAtual + 1).padStart(2,"0")}`;
 
     const novaTransacao = {
       id: Date.now(),
@@ -392,7 +466,11 @@ form.addEventListener("submit", function(e) {
       dataInicio: data,
       totalParcelas,
       ativa: true,
-      dataFim: null
+      dataFim: null,
+      historicoValores:
+        tipo === "despesa_fixa"
+          ? { [chaveMes]: valor }
+          : null
     };
 
     transacoes.push(novaTransacao);
@@ -434,12 +512,9 @@ function calcularTotais() {
   let saldoEmConta = saldoManual;
   let valorAPagar = 0;
 
-  const transacoesFiltradas = filtrarTransacoesDoMes();
+  const transacoesFiltradas = filtrarTransacoesDoMes()
+    .sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio));
 
-  if (configuracaoFinanceira.ativo) {
-    receitaTotal += configuracaoFinanceira.salarioMensal;
-    saldoEmConta += configuracaoFinanceira.salarioMensal;
-  }
 
   transacoesFiltradas.forEach(t => {
 
@@ -580,6 +655,10 @@ function atualizarSistema() {
   atualizarDisplayMes();
   renderizarControlePagamentos();
 
+  const transacoesMes = filtrarTransacoesDoMes();
+  renderizarGraficoMensal(receitaTotal, despesaTotal);
+  renderizarGraficoCategoria(transacoesMes);
+
   salvarDados();
 }
 
@@ -629,7 +708,12 @@ function renderizarTransacoes() {
 
     lista.innerHTML = "";
 
-    const transacoesFiltradas = filtrarTransacoesDoMes();
+    const transacoesFiltradas = filtrarTransacoesDoMes()
+      .sort((a, b) => {
+        const dataA = new Date(a.dataInicio + "T00:00:00");
+        const dataB = new Date(b.dataInicio + "T00:00:00");
+        return dataA - dataB;
+      });
 
     transacoesFiltradas.forEach(transacao => {
     const tr = document.createElement("tr");
@@ -664,18 +748,16 @@ function renderizarTransacoes() {
             : "-"}
         </td>
         <td>${transacao.categoria || "-"}</td>
-        <td>${transacao.dataInicio}</td>
+        <td>${formatarDataBR(transacao.dataInicio)}</td>
         <td>
+          ${transacao.virtual ? "-" : `
             <button onclick="editarTransacao(${transacao.id})" style="background:#2563eb;">
               ✏️
             </button>
             <button onclick="deletarTransacao(${transacao.id})">
               🗑️
             </button>
-
-            ${transacao.tipo === "despesa_fixa" && transacao.ativa
-              ? `<button onclick="encerrarDespesa(${transacao.id})">⛔</button>`
-              : ""}
+          `}
         </td>
     `;
 
@@ -696,44 +778,183 @@ function deletarTransacao(id) {
 
 // META FINANCEIRA
 function atualizarMeta(totalReceita, saldo) {
-  const metaIdeal = (totalReceita * metaPercentual) / 100;
+
+  const percentual = parseFloat(document.getElementById("metaPercent").value) || 0;
+  metaValorFixo = parseFloat(document.getElementById("metaValorFixo").value) || 0;
+  metaAnual = parseFloat(document.getElementById("metaAnual").value) || 0;
+
+  const metaIdealPercentual = (totalReceita * percentual) / 100;
+
+  const metaIdealFinal =
+    metaValorFixo > 0
+      ? metaValorFixo
+      : metaIdealPercentual;
 
   document.getElementById("metaIdeal").textContent =
-    formatarMoeda(metaIdeal);
+    formatarMoeda(metaIdealFinal);
 
   document.getElementById("metaAtual").textContent =
     formatarMoeda(saldo);
 
-  const progresso = saldo > 0
-    ? (saldo / metaIdeal) * 100
+  const progresso = metaIdealFinal > 0
+    ? (saldo / metaIdealFinal) * 100
     : 0;
 
   document.getElementById("metaProgress").style.width =
     Math.min(progresso, 100) + "%";
 
-  const status = saldo >= metaIdeal
-    ? "Meta Atingida ✅"
-    : "Abaixo da Meta ⚠️";
+  // 🔥 META ANUAL
+  const acumuladoAno = transacoes
+    .filter(t => t.tipo === "receita")
+    .reduce((acc, t) => acc + t.valorTotal, 0);
 
-  document.getElementById("metaStatus").textContent = status;
+  document.getElementById("metaAnualAtual").textContent =
+    formatarMoeda(acumuladoAno);
+}
+
+document.getElementById("addObjetivo")
+  .addEventListener("click", () => {
+
+    const nome = document.getElementById("objetivoNome").value;
+    const valor = parseFloat(document.getElementById("objetivoValor").value);
+
+    if (!nome || !valor) return;
+
+    objetivos.push({
+      id: Date.now(),
+      nome,
+      valor,
+      acumulado: 0
+    });
+
+    renderizarObjetivos();
+  });
+
+function renderizarObjetivos() {
+
+  const container = document.getElementById("listaObjetivos");
+  container.innerHTML = "";
+
+  objetivos.forEach(obj => {
+
+    const div = document.createElement("div");
+
+    const progresso =
+      (obj.acumulado / obj.valor) * 100;
+
+    div.classList.add("objetivo-card");
+
+    div.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <strong>${obj.nome}</strong>
+        <button onclick="removerObjetivo(${obj.id})"
+          style="background:#dc2626;color:white;border:none;border-radius:5px;padding:4px 8px;cursor:pointer;">
+          ✕
+        </button>
+      </div>
+      <small>${formatarMoeda(obj.acumulado)} / ${formatarMoeda(obj.valor)}</small>
+      <div class="progress-bar">
+        <div class="progress" style="width:${Math.min(progresso,100)}%"></div>
+      </div>
+      <hr>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+function removerObjetivo(id) {
+  objetivos = objetivos.filter(o => o.id !== id);
+  renderizarObjetivos();
 }
 
 function editarTransacao(id) {
-  const transacao = transacoes.find(t => t.id === id);
 
+  const transacao = transacoes.find(t => t.id === id);
   if (!transacao) return;
 
-  document.getElementById("tipo").value = transacao.tipo;
-  document.getElementById("descricao").value = transacao.descricao;
-  document.getElementById("valor").value = transacao.valorTotal;
-  document.getElementById("categoria").value = transacao.categoria;
-  document.getElementById("data").value = transacao.dataInicio;
-
-  modoEdicao = true;
   idEmEdicao = id;
 
-  document.querySelector(".btn-add").textContent = "Salvar Alteração";
+  document.getElementById("editTipo").value = transacao.tipo;
+  document.getElementById("editDescricao").value = transacao.descricao;
+  document.getElementById("editValor").value = transacao.valorTotal;
+  document.getElementById("editCategoria").value = transacao.categoria;
+  document.getElementById("editData").value = transacao.dataInicio;
+
+  if (transacao.formaPagamento) {
+    document.getElementById("editFormaPagamento").value = transacao.formaPagamento;
+  }
+
+  document.getElementById("editModal").classList.remove("hidden");
 }
+
+// =============================
+// BOTÕES DO MODAL DE EDIÇÃO
+// =============================
+
+document.getElementById("cancelEdit").addEventListener("click", () => {
+  document.getElementById("editModal").classList.add("hidden");
+  idEmEdicao = null;
+});
+
+document.getElementById("confirmEdit").addEventListener("click", () => {
+
+  if (!idEmEdicao) return;
+
+  const tipo = document.getElementById("editTipo").value;
+  const descricao = document.getElementById("editDescricao").value;
+  const valor = parseFloat(document.getElementById("editValor").value);
+  const categoria = document.getElementById("editCategoria").value;
+  const data = document.getElementById("editData").value;
+
+  const formaPagamento =
+    tipo.includes("despesa")
+      ? document.getElementById("editFormaPagamento").value
+      : null;
+
+  const chaveMes = `${anoAtual}-${String(mesAtual + 1).padStart(2,"0")}`;
+
+  transacoes = transacoes.map(t => {
+
+    if (t.id === idEmEdicao) {
+
+      // 🔥 SE FOR DESPESA FIXA
+      if (t.tipo === "despesa_fixa") {
+
+        return {
+          ...t,
+          descricao,
+          categoria,
+          formaPagamento,
+          valorTotal: valor,
+          historicoValores: {
+            ...t.historicoValores,
+            [chaveMes]: valor   // 👈 AQUI ESTÁ A CORREÇÃO
+          }
+        };
+
+      }
+
+      // 🔥 OUTROS TIPOS
+      return {
+        ...t,
+        tipo,
+        descricao,
+        valorTotal: valor,
+        categoria,
+        dataInicio: data,
+        formaPagamento
+      };
+    }
+
+    return t;
+  });
+
+  idEmEdicao = null;
+  document.getElementById("editModal").classList.add("hidden");
+
+  atualizarSistema();
+});
 
 // =============================
 // ENCERRAR DESPESA FIXA
@@ -769,6 +990,64 @@ function formatarMoeda(valor) {
   return valor.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL"
+  });
+}
+
+// FUNÇÃO PARA FORMATAR A DATA PADRÃO BR
+function formatarDataBR(dataString) {
+  if (!dataString) return "-";
+
+  const [ano, mes, dia] = dataString.split("-");
+
+  return `${dia}/${mes}/${ano}`;
+}
+
+// =============================
+// GRAFICOS
+// =============================
+
+function renderizarGraficoMensal(receita, despesa) {
+
+  const ctx = document.getElementById("graficoMensal");
+
+  if (graficoMensal) graficoMensal.destroy();
+
+  graficoMensal = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Receita', 'Despesa'],
+      datasets: [{
+        label: 'Resumo do Mês',
+        data: [receita, despesa],
+        backgroundColor: ['#16a34a', '#dc2626']
+      }]
+    }
+  });
+}
+
+function renderizarGraficoCategoria(transacoesMes) {
+
+  const categorias = {};
+  
+  transacoesMes.forEach(t => {
+    if (t.tipo.includes("despesa")) {
+      categorias[t.categoria] =
+        (categorias[t.categoria] || 0) + t.valorMes;
+    }
+  });
+
+  const ctx = document.getElementById("graficoCategoria");
+
+  if (graficoCategoria) graficoCategoria.destroy();
+
+  graficoCategoria = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: Object.keys(categorias),
+      datasets: [{
+        data: Object.values(categorias)
+      }]
+    }
   });
 }
 
@@ -813,6 +1092,14 @@ function carregarDados() {
 
   if (configuracaoFinanceira.ativo) {
     document.getElementById("salarioFixo").checked = true;
+  }
+
+  if (
+    configuracaoFinanceira.ativo &&
+    !configuracaoFinanceira.dataInicio
+  ) {
+    configuracaoFinanceira.dataInicio =
+      new Date(anoAtual, mesAtual, 1).toISOString();
   }
 
   atualizarSistema();

@@ -388,6 +388,34 @@ input, select {
   margin-bottom: 20px;
 }
 
+.table-wrapper {
+  max-height: 350px; /* você pode ajustar */
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+/* Cabeçalho fixo */
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f1f3f6; /* ajuste para combinar com seu tema */
+  z-index: 2;
+}
+
+/* Scroll mais elegante */
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background-color: #c1c7d0;
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #9ea7b3;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -403,24 +431,104 @@ th, td {
   border-bottom: 1px solid #ddd;
 }
 
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 95%;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.modal-buttons button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#confirmEdit {
+  background: #2563eb;
+  color: white;
+}
+
+.cancel-btn {
+  background: #e5e7eb;
+}
+
+/* SESSÃO INFERIOR */
+.bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
 /* META FINANCEIRA */
 .meta {
   background-color: white;
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  height: 650px;
 }
 
 .meta h2 {
   margin-bottom: 15px;
 }
 
+.meta-config h3 {
+  font-size: 0.95rem;
+  margin-top: 10px;
+  color: #334155;
+}
+
 .meta-config {
+  margin-bottom: 15px;
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.meta-info {
+  background: #eef2f7;
+  padding: 15px;
+  border-radius: 8px;
   margin-bottom: 15px;
 }
 
 .meta-info p {
-  margin-bottom: 5px;
+  margin-bottom: 6px;
+  font-weight: 500;
 }
 
 .progress-bar {
@@ -437,4 +545,37 @@ th, td {
   width: 0%;
   background-color: #7c3aed;
   transition: width 0.3s ease;
+}
+
+.objetivo-config {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.objetivo-config input {
+  flex: 1;
+}
+
+#listaObjetivos {
+  overflow-y: auto;
+  max-height: 250px;
+  padding-right: 5px;
+}
+
+#listaObjetivos::-webkit-scrollbar {
+  width: 6px;
+}
+
+#listaObjetivos::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 6px;
+}
+
+/* GRAFICOS */
+.graficos {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
