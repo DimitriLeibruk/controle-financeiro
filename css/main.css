@@ -1,0 +1,15 @@
+/* =============================
+   MAIN - Importa todos os estilos
+   ============================= */
+
+@import url('base.css');
+@import url('layout.css');
+@import url('header.css');
+@import url('dashboard.css');
+@import url('form.css');
+@import url('payment-control.css');
+@import url('table.css');
+@import url('modal.css');
+@import url('meta.css');
+@import url('resumo.css');
+@import url('graficos.css');

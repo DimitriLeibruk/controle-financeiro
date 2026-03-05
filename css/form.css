@@ -1,0 +1,61 @@
+/* =============================
+   FORM - Formulários e controles
+   ============================= */
+
+.form-section {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.form-section h2 {
+  margin-bottom: 20px;
+}
+
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+input, select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.btn-add {
+  grid-column: 1 / -1;
+  padding: 12px;
+  background-color: #1e293b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-add:hover {
+  background-color: #334155;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}

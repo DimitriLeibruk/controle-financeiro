@@ -1,0 +1,92 @@
+/* =============================
+   META - Metas financeiras
+   ============================= */
+
+.meta {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  height: 650px;
+}
+
+.meta h2 {
+  margin-bottom: 15px;
+}
+
+.meta-config h3 {
+  font-size: 0.95rem;
+  margin-top: 10px;
+  color: #334155;
+}
+
+.meta-config {
+  margin-bottom: 15px;
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.meta-info {
+  background: #eef2f7;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.meta-info p {
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.progress-bar {
+  margin-top: 10px;
+  width: 100%;
+  height: 20px;
+  background-color: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  width: 0%;
+  background-color: #7c3aed;
+  transition: width 0.3s ease;
+}
+
+.objetivo-config {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.objetivo-card {
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.objetivo-config input {
+  flex: 1;
+}
+
+#listaObjetivos {
+  overflow-y: auto;
+  max-height: 250px;
+  padding-right: 5px;
+}
+
+#listaObjetivos::-webkit-scrollbar {
+  width: 6px;
+}
+
+#listaObjetivos::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 6px;
+}

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controle financeiro</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/main.css">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -296,20 +296,66 @@
 
       </section>
     </div>
+    
+    <!-- RESUMO DO MES -->
+    <div class="resumo-area">
+      <section class="resumo-mes">
+        <h2>Resumo do Mês</h2>
 
-    <!-- GRÁFICOS -->
-    <div class="graficos-area">
-      <section class="graficos">
-        <h2>Análise Financeira</h2>
+        <div class="resumo-percentuais" id="resumoPercentuais"></div>
 
-        <canvas id="graficoMensal"></canvas>
-        <canvas id="graficoCategoria" style="margin-top:30px;"></canvas>
+        <div class="resumo-tabela" id="resumoTabela"></div>
+
+        <div class="resumo-status" id="resumoStatus"></div>
+
+        <div class="resumo-actions">
+          <button type="button" class="btn-pdf" id="btnPdf">📄 PDF</button>
+          <button type="button" class="btn-csv" id="btnCsv">📊 CSV</button>
+          <button type="button" class="btn-print" id="btnPrint">🖨 Imprimir</button>
+        </div>
+
+        <div class="resumo-detalhes">
+          <div id="resumoComparativo"></div>
+          <div id="resumoCategoriaTop"></div>
+          <div id="resumoCredito"></div>
+        </div>
 
       </section>
     </div>
 
   </section>
 
-  <script src="script.js"></script>
+  <section class="graficos-full container">
+    <!-- GRÁFICOS -->
+    <div class="graficos-area">
+      <section class="graficos">
+        <h2>Análise Financeira</h2>
+
+        <div class="carousel-container">
+
+          <button type="button" class="carousel-btn left" data-grafico-dir="-1">‹</button>
+
+          <div class="carousel-content">
+            <div class="grafico-item ativo">
+              <canvas id="graficoMensal"></canvas>
+            </div>
+
+            <div class="grafico-item">
+              <canvas id="graficoCategoria"></canvas>
+            </div>
+          </div>
+
+          <button type="button" class="carousel-btn right" data-grafico-dir="1">›</button>
+
+        </div>
+
+      </section>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
