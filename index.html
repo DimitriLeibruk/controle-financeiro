@@ -261,11 +261,14 @@
 
         <div class="meta-config">
 
-          <h3>Meta Percentual</h3>
+          <h3>Meta Percentual sobre a Receita (%)</h3>
           <input type="number" id="metaPercent" value="20" min="0" max="100">
 
-          <h3>Meta Valor Fixo Mensal</h3>
+          <h3>Meta de Economia Mensal Fixa (R$)</h3>
           <input type="number" id="metaValorFixo" placeholder="Ex: 1000">
+
+          <h3>% do saldo final para poupança automática</h3>
+          <input type="number" id="metaPercentSaldoFinal" value="0" min="0" max="100">
 
           <h3>Meta Anual</h3>
           <input type="number" id="metaAnual" placeholder="Ex: 20000">
@@ -276,6 +279,7 @@
           <p>Meta Ideal: <span id="metaIdeal">R$ 0,00</span></p>
           <p>Economia Atual: <span id="metaAtual">R$ 0,00</span></p>
           <p>Meta Anual Acumulada: <span id="metaAnualAtual">R$ 0,00</span></p>
+          <p>Metas por Objetivo: <span id="metaObjetivosResumo">0</span></p>
         </div>
 
         <div class="progress-bar">
@@ -302,11 +306,7 @@
       <section class="resumo-mes">
         <h2>Resumo do Mês</h2>
 
-        <div class="resumo-percentuais" id="resumoPercentuais"></div>
-
         <div class="resumo-tabela" id="resumoTabela"></div>
-
-        <div class="resumo-status" id="resumoStatus"></div>
 
         <div class="resumo-actions">
           <button type="button" class="btn-pdf" id="btnPdf">📄 PDF</button>
@@ -317,9 +317,13 @@
 
         <div class="resumo-detalhes">
           <div id="resumoComparativo"></div>
-          <div id="resumoCategoriaTop"></div>
           <div id="resumoCredito"></div>
+          <div id="resumoInsight"></div>
         </div>
+
+        <div class="resumo-percentuais" id="resumoPercentuais"></div>
+
+        <div class="resumo-status" id="resumoStatus"></div>
 
       </section>
     </div>

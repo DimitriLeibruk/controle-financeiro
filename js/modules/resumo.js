@@ -37,6 +37,7 @@ export function renderizarResumo(receita, despesa, saldoFinal) {
 }
 
 export function renderizarResumoAvancado(transacoesMes, receita, despesa, saldoFinal) {
+  // Percentuais por categoria de despesa
   const categorias = {};
   transacoesMes.forEach(t => {
     if (t.tipo.includes("despesa")) {
@@ -54,6 +55,106 @@ export function renderizarResumoAvancado(transacoesMes, receita, despesa, saldoF
     `;
   });
   document.getElementById("resumoPercentuais").innerHTML = percentuaisHTML;
+
+  // Comparativo com mês anterior
+  const mesAtual = state.mesAtual;
+  const anoAtual = state.anoAtual;
+  let comparativoHTML = `
+    <div class="resumo-box">
+      <strong>Comparativo com mês anterior</strong>
+      <p>Aguardando dados do mês anterior.</p>
+    </div>
+  `;
+
+  if (!(anoAtual === 0 && mesAtual === 0)) {
+    const mesAnterior = mesAtual === 0 ? 11 : mesAtual - 1;
+    const anoAnterior = mesAtual === 0 ? anoAtual - 1 : anoAtual;
+
+    const backupMes = state.mesAtual;
+    const backupAno = state.anoAtual;
+
+    state.mesAtual = mesAnterior;
+    state.anoAtual = anoAnterior;
+    const { receitaTotal: receitaAnt, despesaTotal: despesaAnt, saldoFinal: saldoAnt } =
+      calcularTotais();
+
+    state.mesAtual = backupMes;
+    state.anoAtual = backupAno;
+
+    if (receitaAnt || despesaAnt || saldoAnt) {
+      const deltaReceita = receita - receitaAnt;
+      const deltaDespesa = despesa - despesaAnt;
+      const deltaSaldo = saldoFinal - saldoAnt;
+
+      const formatDelta = (valor) =>
+        `${valor >= 0 ? "+" : "-"} ${formatarMoeda(Math.abs(valor))}`;
+
+      comparativoHTML = `
+        <div class="resumo-box">
+          <strong>Comparativo com mês anterior (${mesAnterior + 1}/${anoAnterior})</strong>
+          <p>Receita: ${formatarMoeda(receitaAnt)} → ${formatarMoeda(
+            receita
+          )} (${formatDelta(deltaReceita)})</p>
+          <p>Despesas: ${formatarMoeda(despesaAnt)} → ${formatarMoeda(
+            despesa
+          )} (${formatDelta(deltaDespesa)})</p>
+          <p>Saldo final: ${formatarMoeda(saldoAnt)} → ${formatarMoeda(
+            saldoFinal
+          )} (${formatDelta(deltaSaldo)})</p>
+        </div>
+      `;
+    }
+  }
+
+  document.getElementById("resumoComparativo").innerHTML = comparativoHTML;
+
+  // Resumo do crédito
+  const totalCredito = transacoesMes
+    .filter(t => t.formaPagamento === "credito")
+    .reduce((acc, t) => acc + t.valorMes, 0);
+
+  const { valorAPagar } = calcularTotais();
+  const jaPagoCredito = Math.max(0, totalCredito - valorAPagar);
+
+  document.getElementById("resumoCredito").innerHTML = `
+    <div class="resumo-box">
+      <strong>Resumo do crédito</strong>
+      <p>Total no crédito neste mês: ${formatarMoeda(totalCredito)}</p>
+      <p>Já pago: ${formatarMoeda(jaPagoCredito)}</p>
+      <p>Em aberto: ${formatarMoeda(valorAPagar)}</p>
+    </div>
+  `;
+
+  // Mini-resumo da meta anual + insight rápido
+  const metaAnual = state.metaAnual || 0;
+  const poupancaAnual = state.poupancaAnualAcumulada || 0;
+  const mesesDecorridos = state.mesAtual + 1;
+  const mesesRestantes = Math.max(0, 12 - mesesDecorridos);
+  const faltaMeta = Math.max(0, metaAnual - poupancaAnual);
+  const sugeridoPorMes = mesesRestantes > 0 ? faltaMeta / mesesRestantes : faltaMeta;
+
+  let insightTexto = "";
+  if (!metaAnual) {
+    insightTexto = "Defina uma meta anual para ver projeções de quanto guardar por mês.";
+  } else if (faltaMeta === 0) {
+    insightTexto = "Parabéns! Você já atingiu sua meta anual de poupança.";
+  } else if (sugeridoPorMes === 0) {
+    insightTexto = "Você está muito próximo de atingir sua meta anual.";
+  } else {
+    insightTexto = `Para alcançar sua meta anual, guarde em média ${formatarMoeda(
+      sugeridoPorMes
+    )} por mês nos próximos ${mesesRestantes} meses.`;
+  }
+
+  document.getElementById("resumoInsight").innerHTML = `
+    <div class="resumo-box">
+      <strong>Meta anual & insight do mês</strong>
+      <p>Meta anual: ${formatarMoeda(metaAnual)}</p>
+      <p>Poupança acumulada no ano: ${formatarMoeda(poupancaAnual)}</p>
+      <p>Falta para a meta: ${formatarMoeda(faltaMeta)}</p>
+      <p>${insightTexto}</p>
+    </div>
+  `;
 }
 
 export async function baixarPDF() {

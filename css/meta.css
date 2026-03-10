@@ -9,7 +9,7 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
-  height: 650px;
+  min-height: 650px;
 }
 
 .meta h2 {
@@ -58,6 +58,18 @@
   transition: width 0.3s ease;
 }
 
+.progress.meta-alerta-baixo {
+  background-color: #f97316;
+}
+
+.progress.meta-alerta-ok {
+  background-color: #22c55e;
+}
+
+.progress.meta-alerta-excedida {
+  background-color: #16a34a;
+}
+
 .objetivo-config {
   display: flex;
   gap: 10px;
@@ -78,8 +90,12 @@
 
 #listaObjetivos {
   overflow-y: auto;
-  max-height: 250px;
+  max-height: 260px;
   padding-right: 5px;
+  margin-top: 8px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 8px;
 }
 
 #listaObjetivos::-webkit-scrollbar {

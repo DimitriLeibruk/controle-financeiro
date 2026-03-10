@@ -146,11 +146,34 @@ export function setupFormHandlers(atualizarSistema, renderizarTransacoes, render
     atualizarSistema();
   });
 
+  // Meta valor fixo mensal
+  document.getElementById("metaValorFixo").addEventListener("input", function () {
+    state.metaValorFixo = parseFloat(this.value) || 0;
+    atualizarSistema();
+  });
+
+  // Meta anual
+  document.getElementById("metaAnual").addEventListener("input", function () {
+    state.metaAnual = parseFloat(this.value) || 0;
+    atualizarSistema();
+  });
+
+  // Percentual do saldo final para poupança automática
+  document
+    .getElementById("metaPercentSaldoFinal")
+    .addEventListener("input", function () {
+      state.percentualPoupancaSaldoFinal = parseFloat(this.value) || 0;
+      atualizarSistema();
+    });
+
   // Objetivos
   document.getElementById("addObjetivo").addEventListener("click", () => {
     const nome = document.getElementById("objetivoNome").value;
     const valor = parseFloat(document.getElementById("objetivoValor").value);
-    if (!nome || !valor) return;
+    if (!nome || isNaN(valor) || valor <= 0) {
+      alert("Preencha o nome e um valor válido para o objetivo.");
+      return;
+    }
 
     state.objetivos.push({
       id: Date.now(),
@@ -159,5 +182,8 @@ export function setupFormHandlers(atualizarSistema, renderizarTransacoes, render
       acumulado: 0
     });
     renderizarObjetivos();
+    atualizarSistema();
+    document.getElementById("objetivoNome").value = "";
+    document.getElementById("objetivoValor").value = "";
   });
 }

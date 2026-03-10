@@ -8,6 +8,11 @@ export function salvarDados() {
   const dados = {
     transacoes: state.transacoes,
     metaPercentual: state.metaPercentual,
+    metaValorFixo: state.metaValorFixo,
+    metaAnual: state.metaAnual,
+    percentualPoupancaSaldoFinal: state.percentualPoupancaSaldoFinal,
+    poupancaAnualAcumulada: state.poupancaAnualAcumulada,
+    objetivos: state.objetivos,
     configuracaoFinanceira: state.configuracaoFinanceira,
     pagamentosDoMes: state.pagamentosDoMes,
     saldoManual: state.saldoManual
@@ -22,6 +27,11 @@ export function carregarDados(callbacks) {
     const dados = JSON.parse(dadosSalvos);
     state.transacoes = dados.transacoes || [];
     state.metaPercentual = dados.metaPercentual ?? 20;
+    state.metaValorFixo = dados.metaValorFixo ?? 0;
+    state.metaAnual = dados.metaAnual ?? 0;
+    state.percentualPoupancaSaldoFinal = dados.percentualPoupancaSaldoFinal ?? 0;
+    state.poupancaAnualAcumulada = dados.poupancaAnualAcumulada ?? 0;
+    state.objetivos = dados.objetivos || [];
     state.saldoManual = dados.saldoManual ?? 0;
     Object.assign(state.configuracaoFinanceira, dados.configuracaoFinanceira || {});
     state.pagamentosDoMes = dados.pagamentosDoMes || {};

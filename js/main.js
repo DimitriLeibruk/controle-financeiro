@@ -40,6 +40,7 @@ function atualizarSistema() {
   saldoElemento.classList.add(saldoAtual >= 0 ? "saldo-positivo" : "saldo-negativo");
 
   atualizarMeta(receitaTotal, saldoAtual);
+  renderizarObjetivos();
   renderizarTransacoes();
   atualizarDisplayMes();
   renderizarControlePagamentos();
@@ -206,6 +207,7 @@ function setupEventListeners() {
     if (btn) {
       removerObjetivo(parseInt(btn.dataset.id));
       renderizarObjetivos();
+      salvarDados();
     }
   });
 }
@@ -271,15 +273,35 @@ function finalizarMes() {
   const totais = calcularTotais();
   const { saldoFinal } = totais;
 
+  const percentualPoupanca = state.percentualPoupancaSaldoFinal || 0;
+  const saldoPositivo = Math.max(0, saldoFinal);
+  const poupancaDoMes = (saldoPositivo * percentualPoupanca) / 100;
+  const saldoProximoMes = saldoFinal - poupancaDoMes;
+
   const confirmar = confirm(
-    `Deseja finalizar o mês atual?\n\nO saldo final calculado é de R$ ${saldoFinal.toFixed(
-      2
-    )}.\nEsse valor será usado como saldo em conta do próximo mês.`
+    `Deseja finalizar o mês atual?\n\n` +
+      `Saldo final calculado: R$ ${saldoFinal.toFixed(2)}\n` +
+      `Poupança automática configurada: ${percentualPoupanca.toFixed(0)}%\n` +
+      `Valor a guardar este mês: R$ ${poupancaDoMes.toFixed(2)}\n\n` +
+      `Saldo que irá para o próximo mês: R$ ${saldoProximoMes.toFixed(2)}`
   );
 
   if (!confirmar) return;
 
-  state.saldoManual = saldoFinal;
+  state.saldoManual = saldoProximoMes;
+
+  if (poupancaDoMes > 0) {
+    state.poupancaAnualAcumulada = (state.poupancaAnualAcumulada || 0) + poupancaDoMes;
+
+    if (state.objetivos && state.objetivos.length > 0) {
+      const qtd = state.objetivos.length;
+      const valorPorObjetivo = poupancaDoMes / qtd;
+      state.objetivos = state.objetivos.map((obj) => ({
+        ...obj,
+        acumulado: (obj.acumulado || 0) + valorPorObjetivo
+      }));
+    }
+  }
 
   if (state.mesAtual === 11) {
     state.mesAtual = 0;
@@ -290,6 +312,7 @@ function finalizarMes() {
 
   salvarDados();
   animarTrocaMes("next");
+  renderizarObjetivos();
 }
 
 // =============================
@@ -310,8 +333,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("salarioFixo").checked = true;
   }
 
+  // Restaurar campos de metas a partir do estado
+  document.getElementById("metaValorFixo").value = state.metaValorFixo || "";
+  document.getElementById("metaAnual").value = state.metaAnual || "";
+  document.getElementById("metaPercentSaldoFinal").value =
+    state.percentualPoupancaSaldoFinal || 0;
+
   setupFormHandlers(atualizarSistema, renderizarTransacoes, renderizarObjetivos);
   setupEventListeners();
+
+  // Renderizar objetivos salvos
+  renderizarObjetivos();
 
   atualizarDisplayMes();
   atualizarSistema();
