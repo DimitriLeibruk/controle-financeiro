@@ -157,6 +157,11 @@ function setupEventListeners() {
   document.getElementById("btnCsv").addEventListener("click", exportarCSV);
   document.getElementById("btnPrint").addEventListener("click", imprimirResumo);
 
+  const btnFinalizarMes = document.getElementById("btnFinalizarMes");
+  if (btnFinalizarMes) {
+    btnFinalizarMes.addEventListener("click", finalizarMes);
+  }
+
   // Carrossel gráficos
   document.querySelectorAll(".carousel-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -256,6 +261,35 @@ function animarTrocaMes(direcao) {
   atualizarSistema();
   tabela.classList.add(direcao === "next" ? "slide-left" : "slide-right");
   setTimeout(() => tabela.classList.remove("slide-left", "slide-right"), 300);
+}
+
+// =============================
+// FINALIZAR MÊS
+// =============================
+
+function finalizarMes() {
+  const totais = calcularTotais();
+  const { saldoFinal } = totais;
+
+  const confirmar = confirm(
+    `Deseja finalizar o mês atual?\n\nO saldo final calculado é de R$ ${saldoFinal.toFixed(
+      2
+    )}.\nEsse valor será usado como saldo em conta do próximo mês.`
+  );
+
+  if (!confirmar) return;
+
+  state.saldoManual = saldoFinal;
+
+  if (state.mesAtual === 11) {
+    state.mesAtual = 0;
+    state.anoAtual++;
+  } else {
+    state.mesAtual++;
+  }
+
+  salvarDados();
+  animarTrocaMes("next");
 }
 
 // =============================

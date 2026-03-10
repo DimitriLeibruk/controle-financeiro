@@ -107,6 +107,11 @@
   color: white;
 }
 
+.btn-close-month {
+  background: #f97316;
+  color: #111827;
+}
+
 .resumo-actions button:hover {
   opacity: 0.85;
 }
