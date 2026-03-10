@@ -3,7 +3,7 @@
    ============================= */
 
 .meta {
-  background-color: white;
+  background-color: var(--card-bg);
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -18,23 +18,23 @@
 
 .meta-config h3 {
   font-size: 0.95rem;
-  margin-top: 10px;
-  color: #334155;
+  margin-top: 14px;
+  color: var(--text-color);
 }
 
 .meta-config {
-  margin-bottom: 15px;
-  background: #f8fafc;
+  margin-bottom: 22px;
+  background: var(--card-subtle-bg);
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 15px;
 }
 
 .meta-info {
-  background: #eef2f7;
+  background: var(--card-subtle-bg);
   padding: 15px;
   border-radius: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 
 .meta-info p {
@@ -46,7 +46,7 @@
   margin-top: 10px;
   width: 100%;
   height: 20px;
-  background-color: #e5e7eb;
+  background-color: var(--progress-track);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -73,19 +73,26 @@
 .objetivo-config {
   display: flex;
   gap: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 
 .objetivo-card {
-  background: #f8fafc;
+  background: var(--card-subtle-bg);
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--card-border);
 }
 
 .objetivo-config input {
   flex: 1;
+}
+
+.objetivo-config button {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: #111827;
+  color: #f9fafb;
 }
 
 #listaObjetivos {
@@ -93,7 +100,7 @@
   max-height: 260px;
   padding-right: 5px;
   margin-top: 8px;
-  background: #f1f5f9;
+  background: var(--card-subtle-bg);
   border-radius: 8px;
   padding: 8px;
 }

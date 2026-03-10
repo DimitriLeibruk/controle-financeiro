@@ -3,7 +3,7 @@
    ============================= */
 
 .resumo-area {
-  background: white;
+  background: var(--card-bg);
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.06);
@@ -15,13 +15,14 @@
 .resumo-mes h2 {
   margin-bottom: 20px;
   font-size: 1.4rem;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--resumo-divider);
   padding-bottom: 8px;
 }
 
 .resumo-percentuais {
   display: flex;
   gap: 10px;
+  margin-top: 18px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
@@ -44,11 +45,11 @@
 }
 
 .resumo-tabela {
-  background: #f8fafc;
+  background: var(--card-subtle-bg);
   padding: 15px;
   border-radius: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+  border: 1px solid var(--card-border);
 }
 
 .resumo-tabela table {
@@ -68,33 +69,30 @@
 }
 
 .status-positivo {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--status-positivo-bg);
+  color: var(--status-positivo-color);
 }
 
 .status-negativo {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--status-negativo-bg);
+  color: var(--status-negativo-color);
 }
 
 .resumo-actions {
   display: flex;
   gap: 10px;
-  margin-top: 15px;
+  margin-top: 18px;
 }
 
 .resumo-actions button {
   padding: 8px 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  border-radius: 999px;
   font-weight: 500;
-  transition: 0.2s;
 }
 
 .btn-pdf {
-  background: #2563eb;
-  color: white;
+  background: #0f172a;
+  color: #e5e7eb;
 }
 
 .btn-csv {
@@ -117,16 +115,16 @@
 }
 
 .resumo-detalhes {
-  margin-top: 15px;
+  margin-top: 22px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
 }
 
 .resumo-box {
-  background: #f8fafc;
+  background: var(--card-subtle-bg);
   padding: 12px;
   border-radius: 8px;
   font-size: 0.95rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--card-border);
 }

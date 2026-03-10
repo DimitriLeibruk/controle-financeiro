@@ -17,7 +17,7 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--card-bg);
   padding: 30px;
   border-radius: 12px;
   width: 400px;
@@ -39,9 +39,7 @@
 
 .modal-buttons button {
   padding: 10px 15px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  border-radius: 999px;
 }
 
 #confirmEdit {
@@ -50,5 +48,6 @@
 }
 
 .cancel-btn {
-  background: #e5e7eb;
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-color);
 }

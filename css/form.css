@@ -3,7 +3,7 @@
    ============================= */
 
 .form-section {
-  background-color: white;
+  background-color: var(--card-bg);
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -16,7 +16,7 @@
 form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
+  gap: 18px 20px;
 }
 
 .form-group {
@@ -32,22 +32,22 @@ label {
 input, select {
   padding: 8px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--input-color);
 }
 
 .btn-add {
   grid-column: 1 / -1;
   padding: 12px;
-  background-color: #1e293b;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.3s;
+  background-color: #111827;
+  color: #f9fafb;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
 }
 
 .btn-add:hover {
-  background-color: #334155;
+  background-color: #020617;
 }
 
 .fade-out {

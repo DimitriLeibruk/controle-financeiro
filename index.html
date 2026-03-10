@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controle financeiro</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,10 +15,13 @@
   <header class="header">
     <div class="container header-container">
       
-      <h1>💰 Finance Control</h1>
+      <div class="header-brand">
+        <img src="assets/logo.png" alt="Finance Control" class="header-logo">
+        <h1>Finance Control</h1>
+      </div>
 
       <div class="month-navigation">
-      <button id="prevMonth" class="nav-btn">⬅</button>
+      <button id="prevMonth" class="nav-btn" aria-label="Mês anterior">←</button>
 
       <div class="month-selector">
         <span id="currentMonthDisplay" class="current-month"></span>
@@ -31,7 +35,8 @@
         </div>
       </div>
 
-      <button id="nextMonth" class="nav-btn">➡</button>
+      <button id="nextMonth" class="nav-btn" aria-label="Próximo mês">→</button>
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Alternar tema">Tema</button>
     </div>
 
     </div>
@@ -71,7 +76,7 @@
         <div class="card saldo">
           <h2>
             Saldo em Conta
-            <button id="editarSaldoBtn" style="margin-left: 10px;">✏️</button>
+            <button id="editarSaldoBtn" class="icon-button" aria-label="Editar saldo">✎</button>
           </h2>
           <p id="saldoEmConta">R$ 0,00</p>
         </div>
@@ -309,10 +314,10 @@
         <div class="resumo-tabela" id="resumoTabela"></div>
 
         <div class="resumo-actions">
-          <button type="button" class="btn-pdf" id="btnPdf">📄 PDF</button>
-          <button type="button" class="btn-csv" id="btnCsv">📊 CSV</button>
-          <button type="button" class="btn-print" id="btnPrint">🖨 Imprimir</button>
-          <button type="button" class="btn-close-month" id="btnFinalizarMes">✅ Finalizar mês</button>
+          <button type="button" class="btn-pdf" id="btnPdf">Exportar PDF</button>
+          <button type="button" class="btn-csv" id="btnCsv">Exportar CSV</button>
+          <button type="button" class="btn-print" id="btnPrint">Imprimir</button>
+          <button type="button" class="btn-close-month" id="btnFinalizarMes">Finalizar mês</button>
         </div>
 
         <div class="resumo-detalhes">

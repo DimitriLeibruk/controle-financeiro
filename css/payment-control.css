@@ -7,7 +7,7 @@
 }
 
 .payment-control {
-  background-color: white;
+  background-color: var(--card-bg);
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -45,15 +45,15 @@
 }
 
 .payment-item {
-  background: #f8fafc;
+  background: var(--card-subtle-bg);
   padding: 12px 15px;
   border-radius: 8px;
   transition: 0.2s;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--card-border);
 }
 
 .payment-item:hover {
-  background: #eef2f7;
+  background: var(--payment-item-hover);
 }
 
 .payment-label {
@@ -80,8 +80,8 @@
 }
 
 .payment-paid {
-  opacity: 0.5;
-  background: #f1f5f9;
+  opacity: 0.7;
+  background: var(--payment-paid-bg);
 }
 
 .payment-paid .payment-value {

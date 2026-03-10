@@ -2,6 +2,56 @@
    BASE - Reset e variáveis
    ============================= */
 
+:root {
+  --bg-body: #f4f6f9;
+  --text-color: #0f172a;
+  --card-bg: #ffffff;
+  --card-subtle-bg: #f8fafc;
+  --card-border: #e5e7eb;
+  --header-bg: #0f172a;
+  --header-text: #e5e7eb;
+  --accent-primary: #111827;
+  --accent-muted: #6b7280;
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --input-color: #0f172a;
+  --progress-track: #e5e7eb;
+  --status-positivo-bg: #dcfce7;
+  --status-positivo-color: #166534;
+  --status-negativo-bg: #fee2e2;
+  --status-negativo-color: #991b1b;
+  --resumo-divider: #e2e8f0;
+  --btn-secondary-bg: #e5e7eb;
+  --btn-secondary-color: #1f2937;
+  --payment-item-hover: #eef2f7;
+  --payment-paid-bg: #f1f5f9;
+}
+
+body.theme-dark {
+  --bg-body: #111827;
+  --text-color: #e5e7eb;
+  --card-bg: #1f2937;
+  --card-subtle-bg: #111827;
+  --card-border: #374151;
+  --header-bg: #020617;
+  --header-text: #f9fafb;
+  --accent-primary: #3b82f6;
+  --accent-muted: #9ca3af;
+  --input-bg: #374151;
+  --input-border: #4b5563;
+  --input-color: #f3f4f6;
+  --progress-track: #374151;
+  --status-positivo-bg: #064e3b;
+  --status-positivo-color: #6ee7b7;
+  --status-negativo-bg: #7f1d1d;
+  --status-negativo-color: #fca5a5;
+  --resumo-divider: #374151;
+  --btn-secondary-bg: #374151;
+  --btn-secondary-color: #e5e7eb;
+  --payment-item-hover: #374151;
+  --payment-paid-bg: #1f2937;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,10 +60,35 @@
 }
 
 body {
-  background-color: #f4f6f9;
-  color: #333;
+  background-color: var(--bg-body);
+  color: var(--text-color);
 }
 
 .hidden {
   display: none;
+}
+
+button {
+  font-family: inherit;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease, color 0.2s ease;
+}
+
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+input,
+select {
+  font-family: inherit;
+}
+
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
 }

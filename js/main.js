@@ -61,6 +61,7 @@ function atualizarSistema() {
 function setupEventListeners() {
   const dropdown = document.getElementById("calendarDropdown");
   const monthDisplay = document.getElementById("currentMonthDisplay");
+  const themeToggle = document.getElementById("themeToggle");
 
   // Navegação de mês
   document.getElementById("prevMonth").addEventListener("click", () => {
@@ -93,6 +94,13 @@ function setupEventListeners() {
     state.modoCalendario = "ano";
     renderizarCalendario(atualizarSistema);
   });
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const isDark = document.body.classList.toggle("theme-dark");
+      localStorage.setItem("financeControlTheme", isDark ? "dark" : "light");
+    });
+  }
 
   // Editar saldo
   document.getElementById("editarSaldoBtn").addEventListener("click", () => {
@@ -320,6 +328,11 @@ function finalizarMes() {
 // =============================
 
 document.addEventListener("DOMContentLoaded", () => {
+  const savedTheme = localStorage.getItem("financeControlTheme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("theme-dark");
+  }
+
   carregarDados({
     onSalarioInput: (val) => {
       document.getElementById("salarioMensal").value = val || "";
