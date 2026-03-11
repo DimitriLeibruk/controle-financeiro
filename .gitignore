@@ -14,5 +14,4 @@ Thumbs.db
 .env.local
 .env.*.local
 
-# Opcional: descomente a linha abaixo se quiser manter as chaves do Supabase fora do repositório
-# js/modules/supabase.js
+js/modules/supabase.js
