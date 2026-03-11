@@ -36,11 +36,114 @@
       </div>
 
       <button id="nextMonth" class="nav-btn" aria-label="Próximo mês">→</button>
-      <button id="themeToggle" class="theme-toggle-btn" aria-label="Alternar tema">Tema</button>
-    </div>
 
+      <div class="settings-trigger">
+        <button type="button" id="btnSettings" class="btn-settings" aria-label="Configurações" aria-expanded="false" aria-haspopup="true" title="Configurações">
+          <svg class="icon-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+        <div id="settingsDropdown" class="settings-dropdown hidden" role="menu">
+          <div class="settings-dropdown-header">
+            <svg class="settings-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span>Configurações</span>
+          </div>
+          <div class="settings-section">
+            <span class="settings-label">Tema</span>
+            <div class="settings-row">
+              <span class="settings-row-label">Modo claro / escuro</span>
+              <button id="themeToggle" class="theme-switch" type="button" role="switch" aria-label="Alternar tema claro e escuro" aria-checked="false" title="Alternar tema">
+                <span class="theme-switch-track">
+                  <span class="theme-switch-icon theme-switch-sun" aria-hidden="true">☀</span>
+                  <span class="theme-switch-icon theme-switch-moon" aria-hidden="true">☾</span>
+                  <span class="theme-switch-thumb"></span>
+                </span>
+              </button>
+            </div>
+          </div>
+          <div class="settings-section settings-auth">
+            <span class="settings-label">Conta</span>
+            <span id="authUserEmail" class="auth-email hidden"></span>
+            <div class="settings-auth-buttons">
+              <button type="button" id="btnEntrar" class="btn-auth btn-entrar">Entrar</button>
+              <button type="button" id="btnCadastrar" class="btn-auth btn-cadastrar">Cadastrar</button>
+              <button type="button" id="btnSair" class="btn-auth btn-sair hidden">Sair</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
+
+  <!-- Modal Login / Cadastro -->
+  <div id="authModal" class="auth-modal hidden" aria-modal="true" aria-labelledby="authModalTitle" role="dialog">
+    <div class="auth-modal-backdrop"></div>
+    <div class="auth-modal-box">
+      <button type="button" id="authModalClose" class="auth-modal-close" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="auth-modal-header">
+        <div class="auth-modal-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h2 id="authModalTitle" class="auth-modal-title">Entrar</h2>
+        <p class="auth-modal-subtitle">Use e-mail ou usuário e senha para acessar</p>
+      </div>
+      <form id="authForm" class="auth-form">
+        <div id="authLoginFields">
+          <div class="auth-field">
+            <label for="authEmailOuUsuario" class="auth-label">E-mail ou usuário</label>
+            <input type="text" id="authEmailOuUsuario" class="auth-input" placeholder="seu@email.com ou usuario" autocomplete="username">
+          </div>
+          <div class="auth-field">
+            <label for="authSenha" class="auth-label">Senha</label>
+            <input type="password" id="authSenha" class="auth-input" placeholder="••••••••" autocomplete="current-password" minlength="6">
+          </div>
+          <p class="auth-forgot-wrap">
+            <button type="button" id="authEsqueciSenha" class="btn-link auth-forgot">Esqueci a senha</button>
+          </p>
+        </div>
+        <div id="authRecuperarFields" class="hidden">
+          <p class="auth-recuperar-texto">Digite o e-mail da conta para receber o link de redefinição de senha.</p>
+          <div class="auth-field">
+            <label for="authEmailRecuperar" class="auth-label">E-mail</label>
+            <input type="email" id="authEmailRecuperar" class="auth-input" placeholder="seu@email.com" autocomplete="email">
+          </div>
+          <div class="auth-modal-buttons">
+            <button type="button" id="authEnviarLink" class="auth-btn auth-btn-primary">Enviar link</button>
+            <button type="button" id="authVoltarLogin" class="auth-btn auth-btn-ghost">Voltar</button>
+          </div>
+        </div>
+        <div id="authCadastroFields" class="hidden">
+          <div class="auth-field">
+            <label for="authEmailCadastro" class="auth-label">E-mail</label>
+            <input type="email" id="authEmailCadastro" class="auth-input" placeholder="seu@email.com" autocomplete="email">
+          </div>
+          <div class="auth-field">
+            <label for="authUsername" class="auth-label">Usuário <span class="auth-label-optional">(opcional)</span></label>
+            <input type="text" id="authUsername" class="auth-input" placeholder="nome de usuário" autocomplete="username" minlength="2" maxlength="50">
+          </div>
+          <div class="auth-field">
+            <label for="authSenhaCadastro" class="auth-label">Senha</label>
+            <input type="password" id="authSenhaCadastro" class="auth-input" placeholder="mínimo 6 caracteres" minlength="6" autocomplete="new-password">
+          </div>
+        </div>
+        <div id="authFormActions" class="auth-form-actions">
+          <button type="submit" id="authSubmit" class="auth-btn auth-btn-primary auth-btn-block">Entrar</button>
+          <button type="button" id="authModalFechar" class="auth-btn auth-btn-ghost auth-btn-block">Cancelar</button>
+        </div>
+        <p id="authMessage" class="auth-message hidden"></p>
+      </form>
+      <div class="auth-modal-footer">
+        <span id="authFooterText" class="auth-footer-text">Não tem conta?</span>
+        <button type="button" id="authToggleMode" class="btn-link auth-footer-link">Criar conta</button>
+      </div>
+    </div>
+  </div>
 
   <section class="top-section container">
 

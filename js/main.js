@@ -19,6 +19,7 @@ import {
 } from './modules/resumo.js';
 import { renderizarGraficoMensal, renderizarGraficoCategoria, mudarGrafico } from './modules/charts.js';
 import { setupFormHandlers } from './modules/forms.js';
+import { setupAuthUI } from './modules/authUI.js';
 
 // =============================
 // ATUALIZAR SISTEMA
@@ -86,6 +87,8 @@ function setupEventListeners() {
 
   // Calendário dropdown
   monthDisplay.addEventListener("click", () => {
+    document.getElementById("settingsDropdown")?.classList.add("hidden");
+    document.getElementById("btnSettings")?.setAttribute("aria-expanded", "false");
     dropdown.classList.toggle("hidden");
     renderizarCalendario(atualizarSistema);
   });
@@ -95,10 +98,29 @@ function setupEventListeners() {
     renderizarCalendario(atualizarSistema);
   });
 
+  // Configurações (engrenagem): abre/fecha o painel
+  const btnSettings = document.getElementById("btnSettings");
+  const settingsDropdown = document.getElementById("settingsDropdown");
+  if (btnSettings && settingsDropdown) {
+    btnSettings.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdown?.classList.add("hidden");
+      const isOpen = !settingsDropdown.classList.toggle("hidden");
+      btnSettings.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".settings-trigger") && !e.target.closest("#settingsDropdown")) {
+        settingsDropdown.classList.add("hidden");
+        btnSettings.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
   if (themeToggle) {
     themeToggle.addEventListener("click", () => {
       const isDark = document.body.classList.toggle("theme-dark");
       localStorage.setItem("financeControlTheme", isDark ? "dark" : "light");
+      themeToggle.setAttribute("aria-checked", isDark ? "true" : "false");
     });
   }
 
@@ -327,20 +349,28 @@ function finalizarMes() {
 // INICIALIZAÇÃO
 // =============================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const savedTheme = localStorage.getItem("financeControlTheme");
-  if (savedTheme === "dark") {
+  const isDark = savedTheme === "dark";
+  if (isDark) {
     document.body.classList.add("theme-dark");
   }
+  const themeToggle = document.getElementById("themeToggle");
+  if (themeToggle) {
+    themeToggle.setAttribute("aria-checked", isDark ? "true" : "false");
+  }
 
-  carregarDados({
+  const callbacksCarregar = {
     onSalarioInput: (val) => {
-      document.getElementById("salarioMensal").value = val || "";
+      const el = document.getElementById("salarioMensal");
+      if (el) el.value = val || "";
     },
     onMetaPercent: (val) => {
-      document.getElementById("metaPercent").value = val;
+      const el = document.getElementById("metaPercent");
+      if (el) el.value = val;
     }
-  });
+  };
+  await carregarDados(callbacksCarregar);
 
   if (state.configuracaoFinanceira.ativo) {
     document.getElementById("salarioFixo").checked = true;
@@ -352,7 +382,15 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("metaPercentSaldoFinal").value =
     state.percentualPoupancaSaldoFinal || 0;
 
+  const carregarDadosComCallbacks = async () => {
+    await carregarDados(callbacksCarregar);
+    document.getElementById("metaValorFixo").value = state.metaValorFixo || "";
+    document.getElementById("metaAnual").value = state.metaAnual || "";
+    document.getElementById("metaPercentSaldoFinal").value = state.percentualPoupancaSaldoFinal || 0;
+    if (state.configuracaoFinanceira.ativo) document.getElementById("salarioFixo").checked = true;
+  };
   setupFormHandlers(atualizarSistema, renderizarTransacoes, renderizarObjetivos);
+  setupAuthUI(atualizarSistema, carregarDadosComCallbacks);
   setupEventListeners();
 
   // Renderizar objetivos salvos

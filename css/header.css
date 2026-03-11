@@ -86,16 +86,86 @@
   z-index: 100;
 }
 
-.theme-toggle-btn {
+/* Switch tema: sol (claro) e lua (escuro) */
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
   background: transparent;
+  cursor: pointer;
   color: var(--header-text);
-  border-radius: 999px;
-  padding: 6px 12px;
-  border: 1px solid rgba(148, 163, 184, 0.5);
 }
 
-.theme-toggle-btn:hover {
-  background: rgba(15, 23, 42, 0.4);
+.theme-switch-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  width: 72px;
+  height: 36px;
+  padding: 0 8px;
+  background: rgba(148, 163, 184, 0.25);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 999px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-switch:hover .theme-switch-track {
+  background: rgba(148, 163, 184, 0.35);
+  border-color: rgba(148, 163, 184, 0.5);
+}
+
+.theme-switch-icon {
+  position: relative;
+  z-index: 2;
+  font-size: 1.1rem;
+  line-height: 1;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.theme-switch-sun {
+  color: #fbbf24;
+}
+
+.theme-switch-moon {
+  color: #e0e7ff;
+}
+
+.theme-switch-thumb {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 28px;
+  height: 28px;
+  background: var(--header-text);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease;
+  z-index: 1;
+}
+
+/* Tema escuro ativo: thumb sobre a lua */
+body.theme-dark .theme-switch-thumb {
+  transform: translateX(36px);
+}
+
+body.theme-dark .theme-switch-sun {
+  opacity: 0.5;
+}
+
+body.theme-dark .theme-switch-moon {
+  opacity: 1;
+}
+
+.theme-switch:not([aria-checked="true"]) .theme-switch-moon {
+  opacity: 0.5;
+}
+
+.theme-switch[aria-checked="true"] .theme-switch-sun {
+  opacity: 0.5;
 }
 
 .calendar-header {
@@ -125,4 +195,130 @@
 
 .calendar-item.active {
   background: #3b82f6;
+}
+
+/* =============================
+   Botão e dropdown de configurações
+   ============================= */
+
+.settings-trigger {
+  position: relative;
+  margin-left: 8px;
+}
+
+.btn-settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.18);
+  color: var(--header-text);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.15s ease;
+}
+
+.btn-settings:hover {
+  background: rgba(148, 163, 184, 0.32);
+  color: #e2e8f0;
+}
+
+.btn-settings[aria-expanded="true"] {
+  background: rgba(59, 130, 246, 0.28);
+  color: #93c5fd;
+}
+
+.icon-gear {
+  width: 22px;
+  height: 22px;
+}
+
+/* Dropdown do modal de configurações */
+.settings-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 300px;
+  max-width: 90vw;
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 14px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.15),
+    0 10px 25px -5px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(148, 163, 184, 0.12);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.settings-dropdown.hidden {
+  display: none;
+}
+
+.settings-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: rgba(148, 163, 184, 0.08);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--header-text);
+}
+
+.settings-dropdown-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.9;
+}
+
+.settings-dropdown .settings-section {
+  padding: 14px 18px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-section + .settings-section {
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.settings-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--header-text);
+  opacity: 0.75;
+  margin-bottom: 2px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.settings-row-label {
+  font-size: 0.9rem;
+  color: var(--text);
+  opacity: 0.95;
+}
+
+.settings-auth .auth-email {
+  font-size: 0.85rem;
+  padding: 8px 10px;
+  word-break: break-all;
+  background: rgba(148, 163, 184, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
 }
