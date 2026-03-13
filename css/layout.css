@@ -4,8 +4,10 @@
 
 .container {
   width: 90%;
-  max-width: 1200px;
+  max-width: min(1200px, 100%);
   margin: 30px auto;
+  padding: 0 4px;
+  min-width: 0;
 }
 
 .top-section {
@@ -13,6 +15,7 @@
   grid-template-columns: 1fr 2fr;
   gap: 20px;
   margin-bottom: 20px;
+  min-width: 0;
 }
 
 .middle-section {
@@ -20,10 +23,12 @@
   grid-template-columns: 1fr 1fr;
   gap: 30px;
   align-items: stretch;
+  min-width: 0;
 }
 
 .bottom-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 30px;
+  min-width: 0;
 }

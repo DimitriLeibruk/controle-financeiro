@@ -50,14 +50,30 @@
   border-radius: 10px;
   margin-bottom: 20px;
   border: 1px solid var(--card-border);
+  overflow: hidden; /* mantém cantos arredondados mesmo com tabela */
 }
 
 .resumo-tabela table {
   width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .resumo-tabela td {
   padding: 6px 0;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.resumo-tabela tr:last-child td {
+  border-bottom: none;
+}
+
+.resumo-tabela td:first-child {
+  text-align: left;
+}
+
+.resumo-tabela td:last-child {
+  text-align: right;
 }
 
 .resumo-status {

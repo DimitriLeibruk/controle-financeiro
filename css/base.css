@@ -59,9 +59,14 @@ body.theme-dark {
   font-family: 'Segoe UI', sans-serif;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   background-color: var(--bg-body);
   color: var(--text-color);
+  min-width: 0;
 }
 
 .hidden {

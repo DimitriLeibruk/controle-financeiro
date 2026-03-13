@@ -1,0 +1,480 @@
+/* =============================
+   RESPONSIVE - Mobile e tablet
+   ============================= */
+
+/* Base: evita overflow horizontal em qualquer largura */
+.form-area,
+.payment-control-area,
+.meta-area,
+.resumo-area,
+.graficos-area {
+  min-width: 0;
+}
+
+.card h2 {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card p {
+  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Tablet: até 992px */
+@media (max-width: 992px) {
+  .container {
+    width: 94%;
+    margin: 20px auto;
+  }
+
+  .top-section {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card {
+    min-width: 0;
+  }
+
+  .bottom-section {
+    grid-template-columns: 1fr;
+  }
+
+  .graficos-area,
+  .graficos {
+    height: 480px;
+  }
+
+  .meta {
+    min-height: auto;
+  }
+
+  .resumo-area {
+    min-height: auto;
+  }
+}
+
+/* Mobile: até 768px */
+@media (max-width: 768px) {
+  .container {
+    width: 96%;
+    margin: 16px auto;
+  }
+
+  /* Header compacto */
+  .header {
+    padding: 12px 0;
+  }
+
+  .header .container,
+  .header-container {
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .header-brand {
+    order: 1;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .header-brand h1 {
+    font-size: 1.35rem;
+  }
+
+  .header-logo {
+    height: 28px;
+  }
+
+  .month-navigation {
+    order: 2;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .month-selector {
+    width: 140px;
+  }
+
+  .current-month {
+    font-size: 1rem;
+  }
+
+  .nav-btn {
+    padding: 8px 12px;
+    font-size: 1rem;
+  }
+
+  .settings-trigger {
+    order: 3;
+    margin-left: 0;
+  }
+
+  .calendar-dropdown {
+    width: 280px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .calendar-item {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .settings-dropdown {
+    min-width: 280px;
+    right: 0;
+    left: auto;
+  }
+
+  /* Top section: salário + dashboard */
+  .top-section {
+    margin-bottom: 16px;
+  }
+
+  .salary-config {
+    padding: 20px;
+  }
+
+  .salary-config h2 {
+    font-size: 1.1rem;
+  }
+
+  .dashboard {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .card {
+    padding: 18px;
+    height: auto;
+    min-height: 90px;
+  }
+
+  .card h2 {
+    font-size: 0.95rem;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .card p {
+    font-size: 1.35rem;
+  }
+
+  .icon-button {
+    padding: 4px 8px;
+    font-size: 0.9rem;
+  }
+
+  /* Middle: formulário + controle de pagamentos */
+  .middle-section {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .form-section {
+    padding: 20px;
+  }
+
+  .form-section h2 {
+    font-size: 1.2rem;
+  }
+
+  form {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .form-group.full-width {
+    grid-column: 1;
+  }
+
+  .btn-add {
+    padding: 14px;
+    font-size: 1rem;
+  }
+
+  .payment-control {
+    padding: 20px;
+  }
+
+  .payment-control h2 {
+    font-size: 1.2rem;
+  }
+
+  #paymentList {
+    grid-template-columns: 1fr;
+    max-height: 280px;
+  }
+
+  .payment-item {
+    padding: 12px;
+  }
+
+  /* Tabela de transações */
+  .transactions {
+    padding: 20px;
+  }
+
+  .transactions h2 {
+    font-size: 1.2rem;
+  }
+
+  .table-wrapper {
+    max-height: 320px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 640px;
+  }
+
+  th, td {
+    padding: 8px 6px;
+    font-size: 0.85rem;
+  }
+
+  .btn-editar, .btn-deletar, .btn-finalizar {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    margin: 2px 1px;
+  }
+
+  /* Modal de edição */
+  .modal-content {
+    width: 96%;
+    max-width: 100%;
+    margin: 16px;
+    padding: 24px;
+  }
+
+  .modal-form {
+    gap: 12px;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-buttons button {
+    width: 100%;
+  }
+
+  /* Metas e resumo */
+  .meta {
+    padding: 20px;
+  }
+
+  .meta h2, .meta h3 {
+    font-size: 1.1rem;
+  }
+
+  .meta-config {
+    padding: 12px;
+  }
+
+  .objetivo-config {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .objetivo-config input {
+    width: 100%;
+  }
+
+  .objetivo-config button {
+    width: 100%;
+  }
+
+  .resumo-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .resumo-actions button {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  .resumo-percentuais {
+    flex-direction: column;
+  }
+
+  .percent-card {
+    min-width: 0;
+  }
+
+  /* Gráficos */
+  .graficos-full .container {
+    width: 96%;
+  }
+
+  .graficos-area {
+    padding: 20px;
+    height: 400px;
+  }
+
+  .graficos {
+    height: 400px;
+  }
+
+  .grafico-item canvas {
+    max-width: 100%;
+    max-height: 280px;
+  }
+
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+  }
+
+  .carousel-btn.left {
+    left: 4px;
+  }
+
+  .carousel-btn.right {
+    right: 4px;
+  }
+
+  /* Auth modal */
+  .auth-modal-box {
+    width: 100%;
+    margin: 12px;
+    border-radius: 16px;
+  }
+
+  .auth-modal-header {
+    padding: 24px 20px 16px;
+  }
+
+  .auth-form {
+    padding: 0 20px 20px;
+  }
+
+  .auth-modal-footer {
+    padding: 14px 20px 20px;
+  }
+}
+
+/* Mobile pequeno: até 480px */
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    margin: 12px auto;
+    padding: 0 12px;
+  }
+
+  .header-brand h1 {
+    font-size: 1.2rem;
+  }
+
+  .header-logo {
+    height: 24px;
+  }
+
+  .month-selector {
+    width: 120px;
+  }
+
+  .current-month {
+    font-size: 0.95rem;
+  }
+
+  .theme-switch-track {
+    width: 60px;
+    height: 32px;
+  }
+
+  .theme-switch-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  body.theme-dark .theme-switch-thumb {
+    transform: translateX(28px);
+  }
+
+  .salary-config h2,
+  .form-section h2,
+  .payment-control h2,
+  .transactions h2,
+  .meta h2,
+  .resumo-mes h2,
+  .graficos h2 {
+    font-size: 1.1rem;
+  }
+
+  .card p {
+    font-size: 1.2rem;
+  }
+
+  .btn-settings {
+    width: 40px;
+    height: 40px;
+  }
+
+  .icon-gear {
+    width: 20px;
+    height: 20px;
+  }
+
+  .resumo-actions {
+    flex-direction: column;
+  }
+
+  .resumo-actions button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .graficos-area,
+  .graficos {
+    height: 340px;
+  }
+
+  .grafico-item canvas {
+    max-height: 240px;
+  }
+}
+
+/* Tabela: layout em cards no mobile (opcional - tabela com scroll horizontal já aplicada) */
+@media (max-width: 768px) {
+  .table-wrapper {
+    margin: 0 -4px;
+    border-radius: 8px;
+  }
+}
+
+/* Safe area para notchs (iPhone X+) */
+@supports (padding: max(0px)) {
+  @media (max-width: 768px) {
+    body {
+      padding-left: max(0px, env(safe-area-inset-left));
+      padding-right: max(0px, env(safe-area-inset-right));
+    }
+
+    .header .container {
+      padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
+    }
+  }
+}
