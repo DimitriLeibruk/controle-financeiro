@@ -26,21 +26,27 @@ import { setupAuthUI } from './modules/authUI.js';
 // =============================
 
 function atualizarSistema() {
-  const { receitaTotal, despesaTotal, saldoEmConta, valorAPagar, saldoAtual, saldoFinal } =
-    calcularTotais();
+  const {
+    receitaTotal,
+    despesaTotal,
+    saldoEmConta,
+    valorAPagar,
+    resultadoMes,
+    saldoFinal
+  } = calcularTotais();
 
   animarNumero(document.getElementById("receitaTotal"), receitaTotal);
   animarNumero(document.getElementById("despesaTotal"), despesaTotal);
   animarNumero(document.getElementById("saldoEmConta"), saldoEmConta);
   animarNumero(document.getElementById("valorAPagar"), valorAPagar);
-  animarNumero(document.getElementById("saldoAtual"), saldoAtual);
+  animarNumero(document.getElementById("resultadoMes"), resultadoMes);
   animarNumero(document.getElementById("saldoFinal"), saldoFinal);
 
-  const saldoElemento = document.getElementById("saldoAtual");
+  const saldoElemento = document.getElementById("resultadoMes");
   saldoElemento.classList.remove("saldo-positivo", "saldo-negativo");
-  saldoElemento.classList.add(saldoAtual >= 0 ? "saldo-positivo" : "saldo-negativo");
+  saldoElemento.classList.add(resultadoMes >= 0 ? "saldo-positivo" : "saldo-negativo");
 
-  atualizarMeta(receitaTotal, saldoAtual);
+  atualizarMeta(receitaTotal, saldoEmConta);
   renderizarObjetivos();
   renderizarTransacoes();
   atualizarDisplayMes();

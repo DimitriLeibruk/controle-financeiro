@@ -179,33 +179,54 @@
         <div class="card saldo">
           <h2>
             Saldo em Conta
+            <button type="button" class="info-pill" aria-label="Informações sobre saldo em conta" title="Valor disponível na conta: saldo inicial que você informou, mais as receitas do mês e menos as despesas já pagas (débito e parcelas de crédito marcadas como pagas).">i</button>
             <button id="editarSaldoBtn" class="icon-button" aria-label="Editar saldo">✎</button>
           </h2>
           <p id="saldoEmConta">R$ 0,00</p>
         </div>
 
         <div class="card despesa">
-          <h2>Despesa Total</h2>
+          <h2>
+            Despesa Total
+            <button type="button" class="info-pill" aria-label="Informações sobre despesa total" title="Soma de todas as despesas do mês (débito e crédito), independente de já ter sido pago ou não.">i</button>
+          </h2>
           <p id="despesaTotal">R$ 0,00</p>
         </div>
 
         <div class="card saldo">
-          <h2>Saldo Atual</h2>
-          <p id="saldoAtual">R$ 0,00</p>
+          <h2>
+            Resultado do Mês
+            <button
+              type="button"
+              class="info-pill"
+              aria-label="Informações sobre o resultado do mês"
+              title="Mostra se o mês fechou no positivo ou negativo, considerando apenas a receita do mês menos todas as despesas do mês."
+            >i</button>
+          </h2>
+          <p id="resultadoMes">R$ 0,00</p>
         </div>
 
         <div class="card receita">
-          <h2>Receita Total</h2>
+          <h2>
+            Receita Total
+            <button type="button" class="info-pill" aria-label="Informações sobre receita total" title="Soma de todas as receitas lançadas neste mês (salário, vendas, etc.).">i</button>
+          </h2>
           <p id="receitaTotal">R$ 0,00</p>
         </div>
 
         <div class="card despesa">
-          <h2>Valor a Pagar</h2>
+          <h2>
+            Valor a Pagar
+            <button type="button" class="info-pill" aria-label="Informações sobre valor a pagar" title="Total das despesas no cartão de crédito que ainda não foram marcadas como pagas neste mês.">i</button>
+          </h2>
           <p id="valorAPagar">R$ 0,00</p>
         </div>
 
         <div class="card saldo">
-          <h2>Saldo Final</h2>
+          <h2>
+            Saldo Final
+            <button type="button" class="info-pill" aria-label="Informações sobre saldo final" title="Quanto ficará na conta se você pagar tudo que está no crédito: saldo em conta menos o valor a pagar no crédito.">i</button>
+          </h2>
           <p id="saldoFinal">R$ 0,00</p>
         </div>
 

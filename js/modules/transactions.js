@@ -186,7 +186,7 @@ export function calcularTotais() {
     despesaTotal,
     saldoEmConta,
     valorAPagar,
-    saldoAtual: saldoEmConta,
+    resultadoMes: receitaTotal - despesaTotal,
     saldoFinal: saldoEmConta - valorAPagar
   };
 }
