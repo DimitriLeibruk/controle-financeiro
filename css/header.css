@@ -244,7 +244,7 @@ body.theme-dark .theme-switch-moon {
   min-width: 300px;
   max-width: 90vw;
   background: var(--card-bg);
-  color: var(--text);
+  color: var(--text-color);
   border-radius: 14px;
   box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.15),
@@ -267,7 +267,7 @@ body.theme-dark .theme-switch-moon {
   border-bottom: 1px solid rgba(148, 163, 184, 0.15);
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--header-text);
+  color: var(--text-color);
 }
 
 .settings-dropdown-icon {
@@ -295,7 +295,7 @@ body.theme-dark .theme-switch-moon {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--header-text);
+  color: var(--text-color);
   opacity: 0.75;
   margin-bottom: 2px;
 }
@@ -310,7 +310,7 @@ body.theme-dark .theme-switch-moon {
 
 .settings-row-label {
   font-size: 0.9rem;
-  color: var(--text);
+  color: var(--text-color);
   opacity: 0.95;
 }
 
