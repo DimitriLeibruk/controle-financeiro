@@ -2,6 +2,10 @@
 
 Aplicação web (HTML/CSS/JS) para controle financeiro mensal, com autenticação via Supabase, dashboard, transações (incluindo despesas parceladas) e exportações.
 
+## Demo (site publicado)
+
+- **Acessar**: `https://finctrlweb.netlify.app/`
+
 ## Como rodar
 
 - **Opção 1 (VSCode/Cursor)**: use a extensão **Live Server** e abra `index.html`.
