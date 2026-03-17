@@ -2,7 +2,7 @@
 // AUTENTICAÇÃO - Login, Cadastro, Logout, Recuperação
 // =============================
 
-import { supabase } from './supabase.js';
+import { supabase, SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase.js';
 
 /**
  * Retorna o usuário logado ou null.
@@ -95,6 +95,96 @@ export async function login(emailOuUsuario, senha) {
 export async function logout() {
   const sb = await supabase();
   await sb.auth.signOut();
+}
+
+/**
+ * Exclui a conta do usuário autenticado após validar a senha.
+ * Tenta a Edge Function "delete-user" (apaga dados + remove do Auth); se não existir, usa a RPC (só apaga dados) e faz logout.
+ * @returns { object } { success: boolean, error?: string }
+ */
+export async function excluirContaComSenha(senha) {
+  try {
+    const user = await getUsuario();
+    if (!user?.email) {
+      return { success: false, error: 'Nenhum usuário logado.' };
+    }
+    const sb = await supabase();
+    // Revalida senha antes de pedir exclusão
+    const { data, error: loginError } = await sb.auth.signInWithPassword({
+      email: user.email,
+      password: senha
+    });
+    if (loginError || !data?.user) {
+      return { success: false, error: 'Senha incorreta.' };
+    }
+    const accessToken = data.session?.access_token;
+    if (!accessToken) {
+      return { success: false, error: 'Não foi possível obter o token de sessão.' };
+    }
+
+    let exclusaoOk = false;
+
+    // 1) Tenta a Edge Function (apaga dados + remove usuário do Auth)
+    try {
+      const url = `${SUPABASE_URL}/functions/v1/delete-user`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+          'apikey': SUPABASE_ANON_KEY
+        }
+      });
+      const body = await res.json().catch(() => ({}));
+      if (res.ok) {
+        exclusaoOk = true;
+      } else if (res.status === 404 || res.status === 401) {
+        // Edge Function não existe (404) ou token não validado (401): usa RPC para apagar dados e fazer logout
+        const { error: rpcError } = await sb.rpc('delete_current_user_and_data');
+        if (!rpcError) exclusaoOk = true;
+        else {
+          return {
+            success: false,
+            error: body.error || rpcError?.message || rpcError || 'Não foi possível excluir os dados. Crie a função no Supabase (veja docs/EXCLUSAO_CONTA.md).'
+          };
+        }
+      } else {
+        return {
+          success: false,
+          error: body.error || `Erro do servidor (${res.status}). Não foi possível excluir a conta.`
+        };
+      }
+    } catch (e) {
+      // Erro de rede: tenta pelo menos a RPC
+      try {
+        const { error: rpcError } = await sb.rpc('delete_current_user_and_data');
+        if (!rpcError) exclusaoOk = true;
+        else {
+          return {
+            success: false,
+            error: rpcError?.message || rpcError || 'Não foi possível excluir a conta. Verifique a conexão e se a função delete_current_user_and_data existe no Supabase.'
+          };
+        }
+      } catch (rpcEx) {
+        return {
+          success: false,
+          error: 'Não foi possível excluir a conta. Verifique sua conexão e a documentação (docs/EXCLUSAO_CONTA.md).'
+        };
+      }
+    }
+
+    if (exclusaoOk) {
+      await sb.auth.signOut();
+      return { success: true };
+    }
+    return { success: false, error: 'Não foi possível excluir a conta.' };
+  } catch (e) {
+    console.error('excluirContaComSenha:', e);
+    return {
+      success: false,
+      error: e?.message || 'Ocorreu um erro inesperado. Tente novamente.'
+    };
+  }
 }
 
 /**

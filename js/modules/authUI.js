@@ -9,7 +9,8 @@ import {
   cadastrar,
   logout,
   recuperarSenha,
-  onAuthStateChange
+  onAuthStateChange,
+  excluirContaComSenha
 } from './auth.js';
 
 let isLoginMode = true;
@@ -28,6 +29,7 @@ async function atualizarHeader(user) {
   const btnEntrar = getEl('btnEntrar');
   const btnCadastrar = getEl('btnCadastrar');
   const btnSair = getEl('btnSair');
+  const btnExcluirConta = getEl('btnExcluirConta');
   if (!emailEl || !btnEntrar) return;
 
   if (user?.email) {
@@ -37,9 +39,11 @@ async function atualizarHeader(user) {
     btnEntrar.classList.add('hidden');
     btnCadastrar.classList.add('hidden');
     btnSair.classList.remove('hidden');
+    btnExcluirConta?.classList.remove('hidden');
   } else {
     emailEl.classList.add('hidden');
     btnSair.classList.add('hidden');
+    btnExcluirConta?.classList.add('hidden');
     btnEntrar.classList.remove('hidden');
     btnCadastrar.classList.remove('hidden');
   }
@@ -97,6 +101,7 @@ export function setupAuthUI(atualizarSistema, carregarDados) {
   const btnEntrar = getEl('btnEntrar');
   const btnCadastrar = getEl('btnCadastrar');
   const btnSair = getEl('btnSair');
+  const btnExcluirConta = getEl('btnExcluirConta');
   const authEsqueciSenha = getEl('authEsqueciSenha');
   const authRecuperarFields = getEl('authRecuperarFields');
   const authVoltarLogin = getEl('authVoltarLogin');
@@ -212,6 +217,41 @@ export function setupAuthUI(atualizarSistema, carregarDados) {
     await atualizarHeader(null);
     await carregarDados();
     atualizarSistema();
+  });
+
+  function fecharDropdownConfiguracoes() {
+    const dd = getEl('settingsDropdown');
+    const btn = getEl('btnSettings');
+    if (dd) dd.classList.add('hidden');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+
+  btnExcluirConta?.addEventListener('click', async () => {
+    const confirmar = window.confirm(
+      'Tem certeza de que deseja excluir sua conta? Essa ação é permanente e não pode ser desfeita.'
+    );
+    if (!confirmar) return;
+    const senha = window.prompt('Para confirmar, digite a senha da sua conta:');
+    if (senha === null) return; // usuário cancelou
+    if (senha.trim() === '') {
+      alert('Digite sua senha para continuar.');
+      return;
+    }
+    fecharDropdownConfiguracoes();
+    try {
+      const resultado = await excluirContaComSenha(senha.trim());
+      if (!resultado.success) {
+        alert(resultado.error || 'Não foi possível excluir a conta.');
+        return;
+      }
+      await atualizarHeader(null);
+      await carregarDados();
+      atualizarSistema();
+      alert('Conta excluída com sucesso. Você foi deslogado.');
+    } catch (e) {
+      console.error('Erro ao excluir conta:', e);
+      alert('Ocorreu um erro ao excluir a conta. Tente novamente.');
+    }
   });
 
   getUsuario().then(atualizarHeader);

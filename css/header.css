@@ -38,6 +38,12 @@
   align-items: center;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .month-navigation {
   display: flex;
   align-items: center;

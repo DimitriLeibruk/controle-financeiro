@@ -47,6 +47,15 @@
   background: rgba(220, 38, 38, 0.35);
 }
 
+.btn-excluir {
+  background: rgba(127, 29, 29, 0.15);
+  border-color: rgba(127, 29, 29, 0.5);
+}
+
+.btn-excluir:hover {
+  background: rgba(127, 29, 29, 0.3);
+}
+
 .hidden {
   display: none !important;
 }

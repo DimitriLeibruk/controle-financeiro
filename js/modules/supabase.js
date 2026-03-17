@@ -4,8 +4,9 @@
 // Substitua SUPABASE_URL e SUPABASE_ANON_KEY pelos valores do seu projeto
 // (Project Settings → API no painel Supabase)
 
-const SUPABASE_URL = 'https://kusrehhcuwarrvjqeghz.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_3WfecmHmAr2h--6CMrlkyA_SvuwFxmK';
+// Use exatamente a mesma URL do projeto onde a Edge Function "delete-user" está (Project Settings → API no Supabase)
+export const SUPABASE_URL = 'https://kusrehhcuwarrvjqeghz.supabase.co';
+export const SUPABASE_ANON_KEY = 'sb_publishable_3WfecmHmAr2h--6CMrlkyA_SvuwFxmK';
 
 export async function getSupabaseClient() {
   const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
