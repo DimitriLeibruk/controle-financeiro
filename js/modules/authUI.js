@@ -12,6 +12,7 @@ import {
   onAuthStateChange,
   excluirContaComSenha
 } from './auth.js';
+import { toast, confirmDialog, promptDialog } from './notify.js';
 
 let isLoginMode = true;
 
@@ -227,30 +228,38 @@ export function setupAuthUI(atualizarSistema, carregarDados) {
   }
 
   btnExcluirConta?.addEventListener('click', async () => {
-    const confirmar = window.confirm(
-      'Tem certeza de que deseja excluir sua conta? Essa ação é permanente e não pode ser desfeita.'
+    const confirmar = await confirmDialog(
+      'Tem certeza de que deseja excluir sua conta? Essa ação é permanente e não pode ser desfeita.',
+      { title: 'Excluir conta', confirmText: 'Excluir', cancelText: 'Cancelar', danger: true }
     );
     if (!confirmar) return;
-    const senha = window.prompt('Para confirmar, digite a senha da sua conta:');
-    if (senha === null) return; // usuário cancelou
+    const senha = await promptDialog('Para confirmar, digite a senha da sua conta:', {
+      title: 'Confirmar exclusão',
+      placeholder: 'Sua senha',
+      type: 'password',
+      confirmText: 'Excluir',
+      cancelText: 'Cancelar',
+      danger: true
+    });
+    if (senha === null) return;
     if (senha.trim() === '') {
-      alert('Digite sua senha para continuar.');
+      toast('Digite sua senha para continuar.', { type: 'error' });
       return;
     }
     fecharDropdownConfiguracoes();
     try {
       const resultado = await excluirContaComSenha(senha.trim());
       if (!resultado.success) {
-        alert(resultado.error || 'Não foi possível excluir a conta.');
+        toast(resultado.error || 'Não foi possível excluir a conta.', { type: 'error' });
         return;
       }
       await atualizarHeader(null);
       await carregarDados();
       atualizarSistema();
-      alert('Conta excluída com sucesso. Você foi deslogado.');
+      toast('Conta excluída com sucesso. Você foi deslogado.', { type: 'success', duration: 5500 });
     } catch (e) {
       console.error('Erro ao excluir conta:', e);
-      alert('Ocorreu um erro ao excluir a conta. Tente novamente.');
+      toast('Ocorreu um erro ao excluir a conta. Tente novamente.', { type: 'error' });
     }
   });
 

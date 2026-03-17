@@ -3,12 +3,24 @@
 // =============================
 
 import { state } from './state.js';
+import { toast } from './notify.js';
 
 export function setupFormHandlers(atualizarSistema, renderizarTransacoes, renderizarObjetivos) {
   const form = document.getElementById("transactionForm");
   const salarioInput = document.getElementById("salarioMensal");
   const salvarSalarioBtn = document.getElementById("salvarSalario");
   const tipoSelect = document.getElementById("tipo");
+  const parcelasGroup = document.getElementById("parcelasGroup");
+  const parcelasInput = document.getElementById("totalParcelas");
+
+  function atualizarUIParcelas(tipo) {
+    const isParcelada = tipo === "despesa_parcelada";
+    if (parcelasGroup) parcelasGroup.classList.toggle("hidden", !isParcelada);
+    if (parcelasInput) {
+      parcelasInput.disabled = !isParcelada;
+      if (!isParcelada) parcelasInput.value = 1;
+    }
+  }
 
   // Formulário de transação
   form.addEventListener("submit", function (e) {
@@ -24,7 +36,7 @@ export function setupFormHandlers(atualizarSistema, renderizarTransacoes, render
       : null;
 
     if (!tipo || !descricao || !valor || !data) {
-      alert("Preencha todos os campos obrigatórios!");
+      toast("Preencha todos os campos obrigatórios!", { type: "error" });
       return;
     }
 
@@ -83,26 +95,24 @@ export function setupFormHandlers(atualizarSistema, renderizarTransacoes, render
     }
 
     form.reset();
+    atualizarUIParcelas("");
     atualizarSistema();
+    toast("Transação adicionada.", { type: "success" });
   });
 
   // Parcelas dinâmico
   tipoSelect.addEventListener("change", function () {
-    const parcelasInput = document.getElementById("totalParcelas");
-    if (this.value === "despesa_parcelada") {
-      parcelasInput.disabled = false;
-      parcelasInput.value = 1;
-    } else {
-      parcelasInput.disabled = true;
-      parcelasInput.value = 1;
-    }
+    atualizarUIParcelas(this.value);
   });
+
+  // Estado inicial (evita o campo aparecer ao carregar)
+  atualizarUIParcelas(tipoSelect.value);
 
   // Salário
   salvarSalarioBtn.addEventListener("click", () => {
     const valorSalario = parseFloat(salarioInput.value) || 0;
     if (!valorSalario) {
-      alert("Digite um valor válido.");
+      toast("Digite um valor válido.", { type: "error" });
       return;
     }
 
@@ -110,7 +120,7 @@ export function setupFormHandlers(atualizarSistema, renderizarTransacoes, render
     const salarioMensalSelecionado = document.getElementById("salarioMensalUnico").checked;
 
     if (!salarioFixoSelecionado && !salarioMensalSelecionado) {
-      alert("Selecione uma opção.");
+      toast("Selecione uma opção.", { type: "error" });
       return;
     }
 
@@ -138,6 +148,7 @@ export function setupFormHandlers(atualizarSistema, renderizarTransacoes, render
 
     salarioInput.value = "";
     atualizarSistema();
+    toast("Salário atualizado.", { type: "success" });
   });
 
   // Meta percentual
@@ -171,7 +182,7 @@ export function setupFormHandlers(atualizarSistema, renderizarTransacoes, render
     const nome = document.getElementById("objetivoNome").value;
     const valor = parseFloat(document.getElementById("objetivoValor").value);
     if (!nome || isNaN(valor) || valor <= 0) {
-      alert("Preencha o nome e um valor válido para o objetivo.");
+      toast("Preencha o nome e um valor válido para o objetivo.", { type: "error" });
       return;
     }
 
@@ -185,5 +196,6 @@ export function setupFormHandlers(atualizarSistema, renderizarTransacoes, render
     atualizarSistema();
     document.getElementById("objetivoNome").value = "";
     document.getElementById("objetivoValor").value = "";
+    toast("Objetivo adicionado.", { type: "success" });
   });
 }

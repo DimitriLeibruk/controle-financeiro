@@ -20,6 +20,7 @@ import {
 import { renderizarGraficoMensal, renderizarGraficoCategoria, mudarGrafico } from './modules/charts.js';
 import { setupFormHandlers } from './modules/forms.js';
 import { setupAuthUI } from './modules/authUI.js';
+import { toast, confirmDialog, promptDialog } from './modules/notify.js';
 
 // =============================
 // ATUALIZAR SISTEMA
@@ -69,6 +70,18 @@ function setupEventListeners() {
   const dropdown = document.getElementById("calendarDropdown");
   const monthDisplay = document.getElementById("currentMonthDisplay");
   const themeToggle = document.getElementById("themeToggle");
+
+  // Info pills: em mobile, o atributo title não aparece bem.
+  // Ao tocar, mostramos o texto do title em um toast.
+  document.addEventListener("click", (e) => {
+    const btnInfo = e.target.closest?.(".info-pill");
+    if (!btnInfo) return;
+    const texto = btnInfo.getAttribute("title")?.trim();
+    if (!texto) return;
+    e.preventDefault();
+    e.stopPropagation();
+    toast(texto, { type: 'info', title: 'Informação', duration: 6500 });
+  });
 
   // Navegação de mês
   document.getElementById("prevMonth").addEventListener("click", () => {
@@ -132,12 +145,20 @@ function setupEventListeners() {
 
   // Editar saldo
   document.getElementById("editarSaldoBtn").addEventListener("click", () => {
-    const novoSaldo = prompt("Digite o saldo atual em conta:");
-    if (novoSaldo !== null) {
-      state.saldoManual = parseFloat(novoSaldo) || 0;
+    (async () => {
+      const novoSaldo = await promptDialog("Digite o saldo atual em conta:", {
+        title: "Editar saldo",
+        placeholder: "Ex: 1500,00",
+        type: "text",
+        confirmText: "Salvar",
+        cancelText: "Cancelar"
+      });
+      if (novoSaldo === null) return;
+      state.saldoManual = parseFloat(String(novoSaldo).replace(",", ".")) || 0;
       salvarDados();
       atualizarSistema();
-    }
+      toast("Saldo atualizado.", { type: "success" });
+    })();
   });
 
   // Modal edição
@@ -220,10 +241,16 @@ function setupEventListeners() {
       atualizarSistema();
     }
     if (btnFinalizar) {
-      if (confirm("Finalizar? A partir do mês seguinte este item não será mais exibido.")) {
+      (async () => {
+        const ok = await confirmDialog(
+          "Finalizar? A partir do mês seguinte este item não será mais exibido.",
+          { title: "Finalizar transação", confirmText: "Finalizar", cancelText: "Cancelar" }
+        );
+        if (!ok) return;
         finalizarTransacao(id);
         atualizarSistema();
-      }
+        toast("Transação finalizada.", { type: "success" });
+      })();
     }
   });
 
@@ -261,18 +288,26 @@ function obterValorSalarioAtualParaEdicao() {
 function editarTransacao(id) {
   if (id === "salario_fixo") {
     const valorExibir = obterValorSalarioAtualParaEdicao();
-    const novoValor = prompt(
-      "Digite o novo valor do salário fixo mensal:",
-      valorExibir
-    );
-    if (novoValor !== null) {
-      const valor = parseFloat(novoValor.replace(",", "."));
+    (async () => {
+      const novoValor = await promptDialog("Digite o novo valor do salário fixo mensal:", {
+        title: "Editar salário fixo",
+        defaultValue: String(valorExibir ?? ""),
+        placeholder: "Ex: 3000,00",
+        type: "text",
+        confirmText: "Salvar",
+        cancelText: "Cancelar"
+      });
+      if (novoValor === null) return;
+      const valor = parseFloat(String(novoValor).replace(",", "."));
       if (!isNaN(valor) && valor > 0) {
         aplicarAlteracaoSalario(valor);
         salvarDados();
         atualizarSistema();
+        toast("Salário atualizado.", { type: "success" });
+      } else {
+        toast("Digite um valor válido.", { type: "error" });
       }
-    }
+    })();
     return;
   }
 
@@ -305,7 +340,7 @@ function animarTrocaMes(direcao) {
 // FINALIZAR MÊS
 // =============================
 
-function finalizarMes() {
+async function finalizarMes() {
   const totais = calcularTotais();
   const { saldoFinal } = totais;
 
@@ -314,14 +349,14 @@ function finalizarMes() {
   const poupancaDoMes = (saldoPositivo * percentualPoupanca) / 100;
   const saldoProximoMes = saldoFinal - poupancaDoMes;
 
-  const confirmar = confirm(
+  const confirmar = await confirmDialog(
     `Deseja finalizar o mês atual?\n\n` +
       `Saldo final calculado: R$ ${saldoFinal.toFixed(2)}\n` +
       `Poupança automática configurada: ${percentualPoupanca.toFixed(0)}%\n` +
       `Valor a guardar este mês: R$ ${poupancaDoMes.toFixed(2)}\n\n` +
-      `Saldo que irá para o próximo mês: R$ ${saldoProximoMes.toFixed(2)}`
+      `Saldo que irá para o próximo mês: R$ ${saldoProximoMes.toFixed(2)}`,
+    { title: "Finalizar mês", confirmText: "Finalizar", cancelText: "Cancelar" }
   );
-
   if (!confirmar) return;
 
   state.saldoManual = saldoProximoMes;
@@ -349,6 +384,7 @@ function finalizarMes() {
   salvarDados();
   animarTrocaMes("next");
   renderizarObjetivos();
+  toast("Mês finalizado.", { type: "success" });
 }
 
 // =============================

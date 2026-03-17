@@ -184,8 +184,8 @@
         <div class="card saldo">
           <h2>
             Saldo em Conta
-            <button type="button" class="info-pill" aria-label="Informações sobre saldo em conta" title="Valor disponível na conta: saldo inicial que você informou, mais as receitas do mês e menos as despesas já pagas (débito e parcelas de crédito marcadas como pagas).">i</button>
             <button id="editarSaldoBtn" class="icon-button" aria-label="Editar saldo">✎</button>
+            <button type="button" class="info-pill" aria-label="Informações sobre saldo em conta" title="Valor disponível na conta: saldo inicial que você informou, mais as receitas do mês e menos as despesas já pagas (débito e parcelas de crédito marcadas como pagas).">i</button>
           </h2>
           <p id="saldoEmConta">R$ 0,00</p>
         </div>
@@ -277,7 +277,7 @@
             </select>
           </div>
 
-          <div class="form-group">
+          <div class="form-group hidden" id="parcelasGroup">
             <label for="totalParcelas">Quantidade de parcelas</label>
             <input type="number" id="totalParcelas" min="1" value="1">
           </div>
@@ -491,6 +491,29 @@
       </section>
     </div>
   </section>
+
+  <!-- Toasts (notificações) -->
+  <div id="toastHost" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Modal genérico (substitui alert/confirm/prompt) -->
+  <div id="appModal" class="hidden" aria-modal="true" role="dialog" aria-labelledby="appModalTitle">
+    <div class="app-modal-backdrop" data-action="close"></div>
+    <div class="app-modal-box" role="document">
+      <div class="app-modal-header">
+        <h2 id="appModalTitle" class="app-modal-title"></h2>
+      </div>
+      <div class="app-modal-content">
+        <p id="appModalMessage" class="app-modal-message"></p>
+        <div id="appModalInput" class="app-modal-input hidden">
+          <input id="appModalInputField" />
+        </div>
+      </div>
+      <div class="app-modal-actions">
+        <button type="button" id="appModalCancel" class="app-modal-btn">Cancelar</button>
+        <button type="button" id="appModalConfirm" class="app-modal-btn app-modal-btn-primary">Confirmar</button>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

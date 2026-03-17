@@ -4,8 +4,8 @@
 
 .salary-config {
   background: var(--card-bg);
-  padding: 30px;
-  border-radius: 10px;
+  padding: 26px;
+  border-radius: 14px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   height: 100%;
   display: flex;
@@ -14,10 +14,78 @@
   min-width: 0;
 }
 
+.salary-config h2 {
+  margin: 0 0 16px 0;
+  letter-spacing: -0.02em;
+}
+
 .salary-box {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
+}
+
+.salary-box label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(148, 163, 184, 0.08);
+  cursor: pointer;
+  user-select: none;
+}
+
+.salary-box label:hover {
+  background: rgba(148, 163, 184, 0.12);
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+.salary-box input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #3b82f6;
+}
+
+.salary-box input[type="number"] {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(148, 163, 184, 0.08);
+  color: var(--text-color);
+}
+
+.salary-box input[type="number"]::placeholder {
+  color: var(--text-color);
+  opacity: 0.55;
+}
+
+.salary-box input[type="number"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+
+.salary-box button#salvarSalario {
+  border: none;
+  padding: 12px 14px;
+  border-radius: 999px;
+  background: #3b82f6;
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.salary-box button#salvarSalario:hover {
+  background: #2563eb;
+}
+
+.salary-box button#salvarSalario:active {
+  transform: translateY(1px);
 }
 
 .salary-box input[type="number"],

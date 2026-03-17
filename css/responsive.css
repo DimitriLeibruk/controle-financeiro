@@ -180,6 +180,13 @@
     font-size: 0.9rem;
   }
 
+  .info-pill {
+    min-width: 30px;
+    height: 30px;
+    font-size: 0.95rem;
+    touch-action: manipulation;
+  }
+
   /* Middle: formulário + controle de pagamentos */
   .middle-section {
     grid-template-columns: 1fr;

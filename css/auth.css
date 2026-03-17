@@ -38,6 +38,10 @@
   border-color: rgba(148, 163, 184, 0.6);
 }
 
+body:not(.theme-dark) .header-auth-buttons .btn-auth {
+  color: #ffffff;
+}
+
 .btn-sair {
   background: rgba(220, 38, 38, 0.2);
   border-color: rgba(220, 38, 38, 0.5);
